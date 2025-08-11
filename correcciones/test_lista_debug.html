@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Lista de Productos</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        textarea { 
+            width: 100%; 
+            height: 300px; 
+            padding: 15px; 
+            margin: 10px 0; 
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+        button { 
+            padding: 15px 30px; 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:disabled { 
+            background: #666; 
+            cursor: not-allowed; 
+        }
+        .analysis { 
+            background: #333; 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #4CAF50;
+        }
+        .hidden { 
+            display: none; 
+        }
+        .debug { 
+            background: #222; 
+            padding: 15px; 
+            margin-top: 20px; 
+            font-family: monospace; 
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        .stat {
+            display: inline-block;
+            margin: 10px 20px 10px 0;
+            padding: 10px 15px;
+            background: #444;
+            border-radius: 6px;
+        }
+        .stat i {
+            margin-right: 8px;
+            color: #FFD700;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Debug Creador de Ofertas</h1>
+        
+        <div>
+            <h3>📋 Pega tu lista de productos aquí:</h3>
+            <textarea id="productListInput" placeholder="Pega aquí tu lista de productos en formato:
+- Producto - $precio - descripción"></textarea>
+            
+            <div id="listAnalysisInfo" class="analysis hidden">
+                <h4>📊 Análisis de Lista</h4>
+                <div class="stat">
+                    <i class="fas fa-box"></i>
+                    Productos: <span id="detectedProducts">0</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-dollar-sign"></i>
+                    Total: <span id="estimatedTotal">$0</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-truck"></i>
+                    Proveedores: <span id="detectedProviders">0</span>
+                </div>
+            </div>
+            
+            <button id="btnProcessList" disabled>🚀 Procesar Lista</button>
+            <button onclick="loadSampleData()">📝 Cargar Datos de Ejemplo</button>
+            <button onclick="clearAll()">🗑️ Limpiar Todo</button>
+        </div>
+        
+        <div id="debug" class="debug">
+            <h4>🐛 Debug Log:</h4>
+            <div id="debugLog"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/offers-creator.js"></script>
+    
+    <script>
+        function loadSampleData() {
+            const sampleData = `- Aceite Castrol GTX 5W-30 - $1,850 - Aceite mineral 4 litros
+- Filtro de Aceite Mann W712/75 - $320 - Filtro original alemán
+- Filtro de Aire K&N 33-2304 - $1,450 - Filtro lavable de alto flujo
+- Bujías Champion Copper Plus - $180 - Bujía de cobre estándar
+- Pastillas EBC RedStuff - $2,800 - Pastillas cerámicas deportivas
+- Discos Zimmermann Sport - $4,200 - Discos perforados y ranurados
+- Batería Optima RedTop - $8,500 - Batería AGM de arranque
+- Amortiguadores Bilstein B6 - $5,800 - Amortiguadores deportivos`;
+            
+            const input = document.getElementById('productListInput');
+            if (input) {
+                input.value = sampleData;
+                // Disparar evento input manualmente
+                const event = new Event('input', { bubbles: true });
+                input.dispatchEvent(event);
+                log('📝 Datos de ejemplo cargados');
+            }
+        }
+        
+        function clearAll() {
+            const input = document.getElementById('productListInput');
+            if (input) {
+                input.value = '';
+                const event = new Event('input', { bubbles: true });
+                input.dispatchEvent(event);
+            }
+            
+            const debugLog = document.getElementById('debugLog');
+            if (debugLog) {
+                debugLog.innerHTML = '';
+            }
+            
+            log('🗑️ Todo limpiado');
+        }
+        
+        function log(message) {
+            console.log(message);
+            const debugLog = document.getElementById('debugLog');
+            if (debugLog) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugLog.innerHTML += '<div style="margin: 2px 0; padding: 2px 0; border-bottom: 1px solid #333;">' + 
+                                     timestamp + ' - ' + message + '</div>';
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+        
+        // Interceptar logs del OffersCreator
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (args.length > 0 && typeof args[0] === 'string') {
+                log(args.join(' '));
+            }
+        };
+        
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            if (args.length > 0) {
+                log('❌ ERROR: ' + args.join(' '));
+            }
+        };
+        
+        // Verificar que todo esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🎯 DOM cargado');
+            
+            setTimeout(() => {
+                if (typeof offersCreator !== 'undefined') {
+                    log('✅ OffersCreator disponible globalmente');
+                } else {
+                    log('❌ OffersCreator NO disponible');
+                }
+                
+                // Verificar elementos del DOM
+                const elements = [
+                    'productListInput',
+                    'btnProcessList', 
+                    'listAnalysisInfo',
+                    'detectedProducts',
+                    'estimatedTotal',
+                    'detectedProviders'
+                ];
+                
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        log('✅ Elemento encontrado: ' + id);
+                    } else {
+                        log('❌ Elemento NO encontrado: ' + id);
+                    }
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

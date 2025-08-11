@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Galería de Imágenes</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        .debug { 
+            background: #222; 
+            padding: 15px; 
+            margin: 20px 0; 
+            font-family: monospace; 
+            font-size: 12px;
+            border-radius: 8px;
+        }
+        .gallery-section {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .gallery-actions button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-download-all { background: #4CAF50; color: white; }
+        .btn-whatsapp { background: #25D366; color: white; }
+        .btn-save-session { background: #2196F3; color: white; }
+        button:disabled { background: #666; cursor: not-allowed; }
+        
+        .processed-gallery {
+            min-height: 200px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .no-images {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Test Galería de Imágenes</h1>
+        
+        <button onclick="testAddImage()" style="padding: 15px 30px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 10px;">
+            ➕ Agregar Imagen de Prueba
+        </button>
+        
+        <button onclick="testClearGallery()" style="padding: 15px 30px; background: #f44336; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 10px;">
+            🗑️ Limpiar Galería
+        </button>
+        
+        <button onclick="checkElements()" style="padding: 15px 30px; background: #FF9800; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 10px;">
+            🔍 Verificar Elementos
+        </button>
+        
+        <!-- SIMULACIÓN DE LA GALERÍA REAL -->
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3><i class="fas fa-images"></i> Imágenes Procesadas (<span id="processedImageCounter">0</span>)</h3>
+                <div class="gallery-actions">
+                    <button class="btn-save-session" id="btnSaveSession" onclick="saveCurrentSession()" disabled>
+                        <i class="fas fa-save"></i> Guardar Sesión
+                    </button>
+                    <button class="btn-download-all" id="btnDownloadAll" onclick="downloadAllImages()" disabled>
+                        <i class="fas fa-download"></i> Descargar Todo
+                    </button>
+                    <button class="btn-whatsapp" id="btnWhatsApp" onclick="sendToWhatsApp()" disabled>
+                        <i class="fab fa-whatsapp"></i> Enviar a WhatsApp
+                    </button>
+                </div>
+            </div>
+            
+            <div class="processed-gallery" id="processedGalleryContainer">
+                <div class="no-images">
+                    <i class="fas fa-images"></i>
+                    <p>Las imágenes procesadas aparecerán aquí</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug">
+            <h4>🐛 Debug Log:</h4>
+            <div id="debugLog"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/offers-creator.js"></script>
+    
+    <script>
+        let testImageCounter = 0;
+        
+        function testAddImage() {
+            log('🧪 Agregando imagen de prueba...');
+            
+            if (typeof offersCreator !== 'undefined') {
+                // Crear una imagen de prueba
+                testImageCounter++;
+                const testImage = {
+                    url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNENBRjUwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPklNRyAnICsgdGVzdEltYWdlQ291bnRlciArICc8L3RleHQ+PC9zdmc+',
+                    name: `Producto Test ${testImageCounter}`,
+                    price: 1000 + (testImageCounter * 500),
+                    template: 'plantilla_1.png',
+                    timestamp: new Date().toISOString(),
+                    productIndex: testImageCounter - 1
+                };
+                
+                log('📸 Llamando a addToProcessedGallery...');
+                offersCreator.addToProcessedGallery(testImage);
+                
+                log('✅ Imagen agregada. Total: ' + offersCreator.processedImages.length);
+            } else {
+                log('❌ OffersCreator no disponible');
+            }
+        }
+        
+        function testClearGallery() {
+            log('🗑️ Limpiando galería...');
+            
+            if (typeof offersCreator !== 'undefined') {
+                offersCreator.processedImages = [];
+                offersCreator.updateProcessedGallery();
+                log('✅ Galería limpiada');
+            } else {
+                log('❌ OffersCreator no disponible');
+            }
+        }
+        
+        function checkElements() {
+            log('🔍 VERIFICANDO ELEMENTOS DEL DOM...');
+            
+            const elements = [
+                'processedImageCounter',
+                'processedGalleryContainer',
+                'btnSaveSession',
+                'btnDownloadAll',
+                'btnWhatsApp'
+            ];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    log(`✅ ${id}: ENCONTRADO`);
+                } else {
+                    log(`❌ ${id}: NO ENCONTRADO`);
+                }
+            });
+            
+            // Verificar si offersCreator existe y tiene las funciones
+            if (typeof offersCreator !== 'undefined') {
+                log('✅ offersCreator: DISPONIBLE');
+                log(`📊 Imágenes procesadas: ${offersCreator.processedImages ? offersCreator.processedImages.length : 'undefined'}`);
+                
+                if (typeof offersCreator.addToProcessedGallery === 'function') {
+                    log('✅ addToProcessedGallery: FUNCIÓN DISPONIBLE');
+                } else {
+                    log('❌ addToProcessedGallery: FUNCIÓN NO DISPONIBLE');
+                }
+                
+                if (typeof offersCreator.updateProcessedGallery === 'function') {
+                    log('✅ updateProcessedGallery: FUNCIÓN DISPONIBLE');
+                } else {
+                    log('❌ updateProcessedGallery: FUNCIÓN NO DISPONIBLE');
+                }
+            } else {
+                log('❌ offersCreator: NO DISPONIBLE');
+            }
+        }
+        
+        function log(message) {
+            console.log(message);
+            const debugLog = document.getElementById('debugLog');
+            if (debugLog) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugLog.innerHTML += '<div style="margin: 2px 0; padding: 2px 0; border-bottom: 1px solid #333;">' + 
+                                     timestamp + ' - ' + message + '</div>';
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+        
+        // Interceptar logs
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (args.length > 0 && typeof args[0] === 'string' && !args[0].includes('Debug Log')) {
+                log(args.join(' '));
+            }
+        };
+        
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            if (args.length > 0) {
+                log('❌ ERROR: ' + args.join(' '));
+            }
+        };
+        
+        // Funciones dummy para los botones
+        window.downloadAllImages = function() {
+            log('📥 downloadAllImages llamada');
+        };
+        
+        window.sendToWhatsApp = function() {
+            log('📱 sendToWhatsApp llamada');
+        };
+        
+        window.saveCurrentSession = function() {
+            log('💾 saveCurrentSession llamada');
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🎯 DOM cargado');
+            
+            setTimeout(() => {
+                checkElements();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

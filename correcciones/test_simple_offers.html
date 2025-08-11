@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple - Solo Galería</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        .gallery-section {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .processed-gallery {
+            min-height: 200px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .no-images {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+        button {
+            padding: 15px 30px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Simple - Solo Galería</h1>
+        
+        <button onclick="testSimpleAdd()">➕ Agregar Imagen Simple</button>
+        
+        <!-- GALERÍA EXACTA -->
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3><i class="fas fa-images"></i> Imágenes Procesadas (<span id="processedImageCounter">0</span>)</h3>
+            </div>
+            
+            <div class="processed-gallery" id="processedGalleryContainer">
+                <div class="no-images">
+                    <i class="fas fa-images"></i>
+                    <p>Las imágenes procesadas aparecerán aquí</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/offers-creator.js"></script>
+    
+    <script>
+        // SIN interceptar console.log para evitar recursión
+        
+        function testSimpleAdd() {
+            console.log('Test simple iniciado');
+            
+            if (typeof offersCreator === 'undefined') {
+                alert('OffersCreator no está disponible');
+                return;
+            }
+            
+            // Crear imagen de prueba simple
+            const testImage = {
+                url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjRkZENzAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPklNRyBURVNUPC90ZXh0Pjwvc3ZnPg==',
+                name: 'Producto Test',
+                price: 1500,
+                template: 'plantilla_1.png',
+                timestamp: new Date().toISOString(),
+                productIndex: 0
+            };
+            
+            // Verificar que existe la función
+            if (typeof offersCreator.addToProcessedGallery === 'function') {
+                console.log('Función existe, agregando imagen...');
+                offersCreator.addToProcessedGallery(testImage);
+                console.log('Imagen agregada');
+            } else {
+                alert('La función addToProcessedGallery no existe');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado');
+            
+            setTimeout(() => {
+                if (typeof offersCreator !== 'undefined') {
+                    console.log('OffersCreator disponible');
+                    console.log('processedImages length:', offersCreator.processedImages ? offersCreator.processedImages.length : 'undefined');
+                } else {
+                    console.log('OffersCreator NO disponible');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

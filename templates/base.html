@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MMR Group - Dashboard{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
+    {% block head %}{% endblock %}
+</head>
+<body data-theme="dark">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-mmr">MMR</div>
+                    <span class="logo-text">GROUP</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-chevron-left" id="sidebarIcon"></i>
+                </button>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-section">
+                    <div class="nav-section-title">PRINCIPAL</div>
+                    <div class="nav-item active" data-tab="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-tab="offers">
+                        <i class="fas fa-magic"></i>
+                        <span>Creador de Ofertas</span>
+                        <span class="nav-badge">IA</span>
+                    </div>
+                    <div class="nav-item" data-tab="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                        <span class="notification-dot"></span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">HERRAMIENTAS</div>
+                    <div class="nav-item" data-tab="catalog">
+                        <i class="fas fa-book"></i>
+                        <span>Catálogo Digital</span>
+                    </div>
+                    <div class="nav-item" data-tab="contacts">
+                        <i class="fas fa-users"></i>
+                        <span>Contactos</span>
+                    </div>
+                    <div class="nav-item" data-tab="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle-main" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-info">
+                        <h1 class="header-title" id="headerTitle">Dashboard</h1>
+                        <div class="breadcrumb" id="breadcrumb">
+                            <span>MMR Group</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <div class="header-actions-dynamic" id="headerActions">
+                        <!-- Dynamic actions based on current tab -->
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

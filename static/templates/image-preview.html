@@ -1,0 +1,33 @@
+<!-- TEMPLATE: PREVIEW DE IMAGEN -->
+<div class="image-preview-item" data-image-index="{{index}}">
+    <div class="image-preview" onclick="offersCreator.expandImage('{{url}}', '{{name}}')">
+        <img src="{{url}}" alt="{{name}}" loading="lazy">
+        {{#if isProcessing}}
+        <div class="image-processing-overlay">
+            <div class="processing-spinner"></div>
+            <span>Procesando...</span>
+        </div>
+        {{/if}}
+    </div>
+    
+    <div class="image-info">
+        <span class="image-name" title="{{fullName}}">{{name}}</span>
+        {{#if price}}
+        <span class="image-price">${{formattedPrice}}</span>
+        {{/if}}
+        {{#if status}}
+        <div class="image-status status-{{status}}">
+            {{#if (eq status 'ready')}}
+                <i class="fas fa-check-circle"></i>
+                Listo
+            {{else if (eq status 'processing')}}
+                <i class="fas fa-spinner fa-spin"></i>
+                Procesando
+            {{else if (eq status 'error')}}
+                <i class="fas fa-exclamation-circle"></i>
+                Error
+            {{/if}}
+        </div>
+        {{/if}}
+    </div>
+</div>

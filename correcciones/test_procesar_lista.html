@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Procesar Lista</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px 5px;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .analysis-info {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+        .stat {
+            margin: 5px 0;
+        }
+        .processing-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .processing-content {
+            background: #333;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .progress-bar {
+            width: 300px;
+            height: 8px;
+            background: #555;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #FFD700;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Procesar Lista</h1>
+        
+        <div>
+            <h3>Lista de Productos:</h3>
+            <textarea id="productListInput" placeholder="Pega aquí tu lista de productos...">- Aceite Gulf 20W-50 - $2,450 - Aceite motor
+- Filtro Honda Civic - $850 - Filtro aire
+- Bujías NGK - $1,200 - Bujías</textarea>
+        </div>
+
+        <div class="analysis-info" id="listAnalysisInfo">
+            <h4>📊 Análisis de Lista</h4>
+            <div class="stat">🎯 Productos detectados: <strong id="detectedProducts">0</strong></div>
+            <div class="stat">💰 Total estimado: <strong id="estimatedTotal">$0</strong></div>
+            <div class="stat">🏭 Proveedores detectados: <strong id="detectedProviders">0</strong></div>
+        </div>
+
+        <div>
+            <button class="btn" id="btnProcessList" disabled>
+                <i class="fas fa-cog fa-spin" style="display: none;"></i>
+                Procesar Lista
+            </button>
+            <button class="btn" onclick="testAnalysis()">Test Análisis Manual</button>
+            <button class="btn" onclick="showConsoleInfo()">Ver Info Console</button>
+        </div>
+
+        <div id="debug-info" style="margin-top: 20px; background: #222; padding: 15px; border-radius: 8px;">
+            <h4>Debug Info:</h4>
+            <div id="debug-content">Esperando análisis...</div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Procesamiento -->
+    <div class="processing-screen" id="processingScreen">
+        <div class="processing-content">
+            <h3>Procesando Lista...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText">0%</div>
+            <div id="processingStatus">Iniciando...</div>
+            <div style="margin-top: 20px;">
+                <div>Productos: <span id="processingProducts">0</span></div>
+                <div>Total: <span id="processingTotal">$0</span></div>
+                <div>Proveedores: <span id="processingProviders">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulación de la clase OffersCreator para debug
+        class TestOffersCreator {
+            constructor() {
+                this.currentAnalysis = {
+                    products: [],
+                    totalEstimated: 0,
+                    providers: [],
+                    isValid: false
+                };
+                this.isProcessing = false;
+                this.init();
+            }
+
+            init() {
+                console.log('🚀 Inicializando Test Creador de Ofertas...');
+                this.initEventListeners();
+            }
+
+            initEventListeners() {
+                console.log('🎧 Configurando event listeners...');
+                
+                const productListInput = document.getElementById('productListInput');
+                if (productListInput) {
+                    productListInput.addEventListener('input', (e) => {
+                        console.log('📝 Input detectado:', e.target.value.length, 'caracteres');
+                        this.analyzeProductList(e.target.value);
+                    });
+                    productListInput.addEventListener('paste', (e) => {
+                        setTimeout(() => {
+                            console.log('📋 Paste detectado');
+                            this.analyzeProductList(e.target.value);
+                        }, 100);
+                    });
+                } else {
+                    console.error('❌ No se encontró productListInput');
+                }
+
+                const btnProcessList = document.getElementById('btnProcessList');
+                if (btnProcessList) {
+                    btnProcessList.addEventListener('click', () => {
+                        console.log('🖱️ Click en botón procesar');
+                        this.startProcessing();
+                    });
+                    console.log('✅ Event listener agregado al botón');
+                } else {
+                    console.error('❌ No se encontró btnProcessList');
+                }
+            }
+
+            analyzeProductList(text) {
+                console.log('🔍 Analizando lista de productos...', text.length, 'caracteres');
+                
+                const debugDiv = document.getElementById('debug-content');
+                
+                if (!text || text.trim().length === 0) {
+                    console.log('⚠️ Texto vacío');
+                    this.hideAnalysisInfo();
+                    this.disableProcessButton();
+                    debugDiv.innerHTML = 'Texto vacío o no válido';
+                    return;
+                }
+
+                const lines = text.split('\n').filter(line => line.trim());
+                console.log('📄 Líneas encontradas:', lines.length);
+                
+                const products = [];
+                const providers = new Set();
+                let totalEstimated = 0;
+
+                lines.forEach((line, index) => {
+                    const trimmedLine = line.trim();
+                    console.log(`Línea ${index}:`, trimmedLine);
+                    
+                    if (trimmedLine.startsWith('-') && trimmedLine.indexOf(' - ') !== -1) {
+                        const parts = trimmedLine.split(' - ');
+                        console.log('Partes:', parts);
+                        
+                        if (parts.length >= 2) {
+                            const name = parts[0].replace(/^-\s*/, '').trim();
+                            const priceMatch = parts[1].match(/\$[\d,]+/);
+                            
+                            console.log('Nombre:', name, 'Price match:', priceMatch);
+                            
+                            if (name && priceMatch) {
+                                const priceStr = priceMatch[0].replace(/[$,]/g, '');
+                                const price = parseFloat(priceStr);
+                                
+                                if (!isNaN(price)) {
+                                    const product = {
+                                        id: index,
+                                        name: name,
+                                        price: price,
+                                        description: parts[2] || '',
+                                        provider: this.detectProvider(name)
+                                    };
+                                    
+                                    products.push(product);
+                                    totalEstimated += price;
+                                    
+                                    const detectedProvider = this.detectProvider(name);
+                                    if (detectedProvider) {
+                                        providers.add(detectedProvider);
+                                    }
+                                    
+                                    console.log('✅ Producto agregado:', product);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                this.currentAnalysis = {
+                    products: products,
+                    totalEstimated: totalEstimated,
+                    providers: Array.from(providers),
+                    isValid: products.length > 0
+                };
+
+                console.log('📊 Análisis completado:', this.currentAnalysis);
+                
+                debugDiv.innerHTML = `
+                    <strong>Análisis:</strong><br>
+                    Productos: ${products.length}<br>
+                    Total: $${totalEstimated.toLocaleString()}<br>
+                    Proveedores: ${Array.from(providers).join(', ')}<br>
+                    Válido: ${products.length > 0 ? 'Sí' : 'No'}
+                `;
+
+                this.showAnalysisInfo();
+                
+                if (this.currentAnalysis.isValid) {
+                    this.enableProcessButton();
+                } else {
+                    this.disableProcessButton();
+                }
+            }
+
+            detectProvider(productName) {
+                const knownProviders = [
+                    'Gulf', 'Honda', 'Toyota', 'Nissan', 'Ford', 'Chevrolet',
+                    'K&N', 'NGK', 'Brembo', 'Bosch', 'Castrol', 'Mobil',
+                    'Shell', 'Valvoline', 'AC Delco', 'Denso', 'Champion',
+                    'Inmoto', 'Repuestos SA', 'Autopartes'
+                ];
+
+                const upperName = productName.toUpperCase();
+                for (const provider of knownProviders) {
+                    if (upperName.includes(provider.toUpperCase())) {
+                        return provider;
+                    }
+                }
+                
+                const firstWord = productName.split(' ')[0];
+                return firstWord.length > 2 ? firstWord : 'Genérico';
+            }
+
+            showAnalysisInfo() {
+                const analysisInfo = document.getElementById('listAnalysisInfo');
+                const detectedProducts = document.getElementById('detectedProducts');
+                const estimatedTotal = document.getElementById('estimatedTotal');
+                const detectedProviders = document.getElementById('detectedProviders');
+
+                if (analysisInfo) {
+                    analysisInfo.style.display = 'block';
+                }
+
+                if (detectedProducts) {
+                    detectedProducts.textContent = this.currentAnalysis.products.length;
+                }
+
+                if (estimatedTotal) {
+                    estimatedTotal.textContent = '$' + this.currentAnalysis.totalEstimated.toLocaleString();
+                }
+
+                if (detectedProviders) {
+                    detectedProviders.textContent = this.currentAnalysis.providers.length;
+                }
+            }
+
+            hideAnalysisInfo() {
+                const analysisInfo = document.getElementById('listAnalysisInfo');
+                if (analysisInfo) {
+                    analysisInfo.style.display = 'none';
+                }
+            }
+
+            enableProcessButton() {
+                const btnProcessList = document.getElementById('btnProcessList');
+                if (btnProcessList) {
+                    btnProcessList.disabled = false;
+                    btnProcessList.style.opacity = '1';
+                    console.log('✅ Botón habilitado');
+                }
+            }
+
+            disableProcessButton() {
+                const btnProcessList = document.getElementById('btnProcessList');
+                if (btnProcessList) {
+                    btnProcessList.disabled = true;
+                    btnProcessList.style.opacity = '0.5';
+                    console.log('❌ Botón deshabilitado');
+                }
+            }
+
+            startProcessing() {
+                if (!this.currentAnalysis.isValid || this.isProcessing) {
+                    console.log('⚠️ No se puede procesar - Válido:', this.currentAnalysis.isValid, 'Procesando:', this.isProcessing);
+                    return;
+                }
+
+                console.log('🚀 Iniciando procesamiento de lista...');
+                this.isProcessing = true;
+                this.showProcessingScreen();
+                this.simulateProcessing();
+            }
+
+            showProcessingScreen() {
+                const processingScreen = document.getElementById('processingScreen');
+                if (processingScreen) {
+                    processingScreen.style.display = 'flex';
+                    this.updateProcessingStats();
+                }
+            }
+
+            updateProcessingStats() {
+                const processingProducts = document.getElementById('processingProducts');
+                const processingTotal = document.getElementById('processingTotal');
+                const processingProviders = document.getElementById('processingProviders');
+
+                if (processingProducts) {
+                    processingProducts.textContent = this.currentAnalysis.products.length;
+                }
+
+                if (processingTotal) {
+                    processingTotal.textContent = '$' + this.currentAnalysis.totalEstimated.toLocaleString();
+                }
+
+                if (processingProviders) {
+                    processingProviders.textContent = this.currentAnalysis.providers.join(', ');
+                }
+            }
+
+            simulateProcessing() {
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                const processingStatus = document.getElementById('processingStatus');
+
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 25;
+                    if (progress > 100) progress = 100;
+
+                    if (progressFill) {
+                        progressFill.style.width = progress + '%';
+                    }
+
+                    if (progressText) {
+                        progressText.textContent = Math.round(progress) + '%';
+                    }
+
+                    if (processingStatus) {
+                        if (progress < 30) {
+                            processingStatus.textContent = 'Analizando estructura de datos...';
+                        } else if (progress < 60) {
+                            processingStatus.textContent = 'Detectando proveedores...';
+                        } else if (progress < 90) {
+                            processingStatus.textContent = 'Preparando para procesamiento...';
+                        } else {
+                            processingStatus.textContent = 'Listo para análisis automático';
+                        }
+                    }
+
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            alert('¡Procesamiento completado! En la app real aquí se abriría la selección de proveedores.');
+                            document.getElementById('processingScreen').style.display = 'none';
+                            this.isProcessing = false;
+                        }, 500);
+                    }
+                }, 100);
+            }
+        }
+
+        // Inicializar
+        let testCreator;
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎯 DOM cargado, inicializando Test...');
+            testCreator = new TestOffersCreator();
+        });
+
+        function testAnalysis() {
+            const input = document.getElementById('productListInput');
+            if (testCreator) {
+                testCreator.analyzeProductList(input.value);
+            }
+        }
+
+        function showConsoleInfo() {
+            console.log('📊 Estado actual:', testCreator?.currentAnalysis);
+            console.log('🔄 Procesando:', testCreator?.isProcessing);
+        }
+
+        // Cerrar pantalla de procesamiento al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('processing-screen')) {
+                document.getElementById('processingScreen').style.display = 'none';
+                if (testCreator) testCreator.isProcessing = false;
+            }
+        });
+    </script>
+</body>
+</html>

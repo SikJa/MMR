@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Debug</title>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #FFD700;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #FFA500;
+        }
+        
+        .nav-item {
+            padding: 10px;
+            margin: 5px;
+            background: #333;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .nav-item.active {
+            background: #FFD700;
+            color: black;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #555;
+            margin: 10px 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        canvas {
+            background: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Dashboard Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>1. JavaScript Básico</h2>
+        <button onclick="testBasicJS()">Test JavaScript</button>
+        <div id="js-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Chart.js Test</h2>
+        <button onclick="testChart()">Test Chart</button>
+        <canvas id="testChart" width="400" height="200"></canvas>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Navigation Test</h2>
+        <div class="nav-item active" data-tab="dashboard" onclick="testSwitchTab('dashboard')">Dashboard</div>
+        <div class="nav-item" data-tab="offers" onclick="testSwitchTab('offers')">Offers</div>
+        <div class="nav-item" data-tab="analytics" onclick="testSwitchTab('analytics')">Analytics</div>
+        
+        <div id="dashboard" class="tab-content active">
+            <h3>Dashboard Content</h3>
+            <p>Este es el contenido del dashboard</p>
+        </div>
+        
+        <div id="offers" class="tab-content">
+            <h3>Offers Content</h3>
+            <p>Este es el contenido de ofertas</p>
+        </div>
+        
+        <div id="analytics" class="tab-content">
+            <h3>Analytics Content</h3>
+            <p>Este es el contenido de analytics</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Console Log</h2>
+        <p>Abre la consola del navegador (F12) para ver los logs detallados</p>
+    </div>
+
+    <script>
+        console.log('🚀 Test script cargado');
+        
+        function testBasicJS() {
+            console.log('✅ Test JavaScript ejecutado');
+            document.getElementById('js-result').innerHTML = '✅ JavaScript funciona correctamente!';
+        }
+        
+        function testChart() {
+            console.log('📊 Probando Chart.js...');
+            const ctx = document.getElementById('testChart');
+            
+            if (typeof Chart === 'undefined') {
+                console.error('❌ Chart.js no está disponible');
+                return;
+            }
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Test Data',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderColor: '#FFD700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            console.log('✅ Chart.js funciona correctamente');
+        }
+        
+        function testSwitchTab(tab) {
+            console.log('🔄 Cambiando a tab:', tab);
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tab).classList.add('active');
+            
+            console.log('✅ Tab cambiado a:', tab);
+        }
+        
+        // Test automático al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎯 DOM cargado - ejecutando tests automáticos...');
+            
+            setTimeout(() => {
+                console.log('📊 Probando gráfico automáticamente...');
+                testChart();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

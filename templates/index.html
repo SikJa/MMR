@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMR Group - Dashboard SaaS</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='Imagen de WhatsApp 2023-05-17 a las 18.21.23_preview_rev_1.png') }}">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- JSZip for download functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/liquid-glass-global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/offers-creator.css') }}">
+</head>
+<body data-theme="dark">
+    <!-- Fondo liquid glass -->
+    <div class="liquid-glass-bg"></div>
+    <div class="liquid-particles" id="liquidParticles"></div>
+    
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar liquid-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-mmr">MMR</div>
+                    <span class="logo-text">GROUP</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left" id="sidebarIcon"></i>
+                </button>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-section">
+                    <div class="nav-item liquid-nav-item active" data-tab="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="nav-item liquid-nav-item" data-tab="offers">
+                        <i class="fas fa-magic"></i>
+                        <span>Creador de Ofertas</span>
+                    </div>
+                    <div class="nav-item liquid-nav-item" data-tab="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </div>
+                    <div class="nav-item liquid-nav-item" data-tab="projects">
+                        <i class="fas fa-folder"></i>
+                        <span>Projects</span>
+                    </div>
+                    <div class="nav-item liquid-nav-item" data-tab="team">
+                        <i class="fas fa-users"></i>
+                        <span>Team</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Documents</div>
+                    <div class="nav-item" data-tab="data-library">
+                        <i class="fas fa-database"></i>
+                        <span>Data Library</span>
+                    </div>
+                    <div class="nav-item" data-tab="reports">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </div>
+                    <div class="nav-item" data-tab="word-assistant">
+                        <i class="fas fa-robot"></i>
+                        <span>Word Assistant</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <button class="sidebar-toggle-main">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Botón de volver (solo visible en Creador de Ofertas) -->
+                <button class="btn-back-to-dashboard" id="btnBackToDashboard" onclick="switchToDashboard()" style="display: none;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                
+                <h1 class="header-title" id="headerTitle">Dashboard</h1>
+                
+                <!-- Información de última sesión (solo visible en Creador de Ofertas) -->
+                <div class="header-session-info" id="headerSessionInfo" style="display: none;">
+                    <i class="fas fa-clock"></i>
+                    <span>Última sesión: <span id="headerLastSessionTime">Nunca</span></span>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="theme-toggle" title="Cambiar tema">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <div id="headerActions">
+                        <!-- Dynamic actions based on current tab -->
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <div class="dashboard-main">
+                        <!-- Acceso rápido removido según solicitud -->
+
+                        <div class="cards-grid">
+                            <div class="card liquid-glass-card golden-glow">
+                                <div class="card-header">
+                                    <div class="card-title">Total Revenue</div>
+                                    <div class="card-icon">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">$45,231.89</div>
+                                <div class="card-description">+20.1% from last month</div>
+                            </div>
+
+                            <div class="card liquid-glass-card golden-glow">
+                                <div class="card-header">
+                                    <div class="card-title">Subscriptions</div>
+                                    <div class="card-icon">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">+2350</div>
+                                <div class="card-description">+180.1% from last month</div>
+                            </div>
+
+                            <div class="card liquid-glass-card golden-glow">
+                                <div class="card-header">
+                                    <div class="card-title">Sales</div>
+                                    <div class="card-icon">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">+12,234</div>
+                                <div class="card-description">+19% from last month</div>
+                            </div>
+
+                            <div class="card liquid-glass-card golden-glow">
+                                <div class="card-header">
+                                    <div class="card-title">Active Now</div>
+                                    <div class="card-icon">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-value">+573</div>
+                                <div class="card-description">+201 since last hour</div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Overview</h3>
+                                <div class="chart-filters">
+                                    <button class="filter-btn" onclick="updateOverview('week')">Esta Semana</button>
+                                    <button class="filter-btn active" onclick="updateOverview('month')">Este Mes</button>
+                                    <button class="filter-btn" onclick="updateOverview('quarter')">Trimestre</button>
+                                </div>
+                            </div>
+                            <div style="position: relative; height: 350px;">
+                                <canvas id="activityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Clasificación Mayorista vs Minorista</h3>
+                                <div class="chart-description">Distribución de usuarios según perfil</div>
+                            </div>
+                            <div style="position: relative; height: 250px;">
+                                <canvas id="dashboardDonut"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Origen del Contacto</h3>
+                                <div class="chart-description">¿De dónde llegan los usuarios?</div>
+                            </div>
+                            <div style="position: relative; height: 250px;">
+                                <canvas id="dashboardBar"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-sidebar">
+                        <!-- Recent Sales Section -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Recent Sales</h3>
+                                <div class="chart-description">You made 265 sales this month.</div>
+                            </div>
+                            <div class="sales-list">
+                                <div class="sale-item">
+                                    <div class="sale-avatar">
+                                        <div class="avatar-circle">OM</div>
+                                    </div>
+                                    <div class="sale-info">
+                                        <div class="sale-name">Olivia Martin</div>
+                                        <div class="sale-email">olivia.martin@email.com</div>
+                                    </div>
+                                    <div class="sale-amount">+$1,999.00</div>
+                                </div>
+                                <div class="sale-item">
+                                    <div class="sale-avatar">
+                                        <div class="avatar-circle">JL</div>
+                                    </div>
+                                    <div class="sale-info">
+                                        <div class="sale-name">Jackson Lee</div>
+                                        <div class="sale-email">jackson.lee@email.com</div>
+                                    </div>
+                                    <div class="sale-amount">+$39.00</div>
+                                </div>
+                                <div class="sale-item">
+                                    <div class="sale-avatar">
+                                        <div class="avatar-circle">IN</div>
+                                    </div>
+                                    <div class="sale-info">
+                                        <div class="sale-name">Isabella Nguyen</div>
+                                        <div class="sale-email">isabella.nguyen@email.com</div>
+                                    </div>
+                                    <div class="sale-amount">+$299.00</div>
+                                </div>
+                                <div class="sale-item">
+                                    <div class="sale-avatar">
+                                        <div class="avatar-circle">WK</div>
+                                    </div>
+                                    <div class="sale-info">
+                                        <div class="sale-name">William Kim</div>
+                                        <div class="sale-email">will@email.com</div>
+                                    </div>
+                                    <div class="sale-amount">+$99.00</div>
+                                </div>
+                                <div class="sale-item">
+                                    <div class="sale-avatar">
+                                        <div class="avatar-circle">SD</div>
+                                    </div>
+                                    <div class="sale-info">
+                                        <div class="sale-name">Sofia Davis</div>
+                                        <div class="sale-email">sofia.davis@email.com</div>
+                                    </div>
+                                    <div class="sale-amount">+$39.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Offers Tab -->
+                <div id="offers" class="tab-content">
+                    <!-- Nuevo Sistema de Creador de Ofertas -->
+                    <div class="offers-creator-main" id="offersCreatorMain">
+                        <!-- Elementos decorativos blur -->
+                        <div class="blur-decoration"></div>
+                        <div class="blur-decoration-2"></div>
+                        <!-- Elemento blur decorativo -->
+                        <div class="blur-decoration"></div>
+                        
+
+
+                        <!-- Botón ChatGPT Vision -->
+                        <div class="chatgpt-section">
+                            <button class="btn-chatgpt-glass" id="btnChatGPTVision" onclick="openChatGPTVision()">
+                                <div class="btn-glass-content">
+                                    <i class="fas fa-robot"></i>
+                                    <div class="btn-text">
+                                        <span class="btn-title">Abrir ChatGPT Vision</span>
+                                        <span class="btn-subtitle">Extrae datos de imágenes automáticamente</span>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Área para pegar lista -->
+                        <div class="paste-list-section">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    Lista de Productos
+                                </h3>
+                                <p class="section-description">Pega aquí la lista generada por ChatGPT</p>
+                            </div>
+                            
+                            <div class="paste-area-container">
+                                <textarea 
+                                    id="productListInput" 
+                                    class="product-list-textarea"
+                                    placeholder="Ejemplo:&#10;- Aceite Gulf 20W-50 - $2,450&#10;- Kit Transmisión Honda - $8,900&#10;- Filtro K&N - $1,200&#10;- Bujías NGK Iridium - $850&#10;- Pastillas de Freno Brembo - $3,200"
+                                ></textarea>
+                                
+                                <!-- Información de análisis -->
+                                <div class="list-analysis-info" id="listAnalysisInfo" style="display: none;">
+                                    <div class="analysis-item">
+                                        <i class="fas fa-box"></i>
+                                        <span>Productos: <strong id="detectedProducts">0</strong></span>
+                                    </div>
+                                    <div class="analysis-item">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        <span>Total estimado: <strong id="estimatedTotal">$0</strong></span>
+                                    </div>
+                                    <div class="analysis-item">
+                                        <i class="fas fa-building"></i>
+                                        <span>Proveedores: <strong id="detectedProviders">0</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón Procesar Lista -->
+                        <div class="process-section">
+                            <button class="btn-process-glass" id="btnProcessList" disabled>
+                                <div class="btn-glass-content">
+                                    <i class="fas fa-cogs"></i>
+                                    <div class="btn-text">
+                                        <span class="btn-title">Procesar Lista</span>
+                                        <span class="btn-subtitle">Iniciar procesamiento de productos</span>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Área de subir Excel -->
+                        <div class="excel-upload-section">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    <i class="fas fa-file-excel"></i>
+                                    Importar desde Excel
+                                </h3>
+                                <p class="section-description">Arrastra tu archivo .xlsx con columnas: Nombre, Precio</p>
+                            </div>
+                            
+                            <div class="excel-drop-zone" id="excelDropZone">
+                                <div class="drop-zone-content">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <h4>Arrastra tu archivo Excel aquí</h4>
+                                    <p>o haz clic para seleccionar</p>
+                                    <span class="file-types">Formatos: .xlsx, .xls</span>
+                                </div>
+                                <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
+                            </div>
+                        </div>
+
+                        <!-- Historial de Sesiones -->
+                        <div class="sessions-history-section">
+                            <div class="section-header">
+                                <h3 class="section-title">
+                                    <i class="fas fa-history"></i>
+                                    Historial de Sesiones
+                                </h3>
+                                <p class="section-description">Últimas 10 sesiones de procesamiento</p>
+                            </div>
+                            
+                            <div class="sessions-grid" id="sessionsGrid">
+                                <div class="no-sessions">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No hay sesiones guardadas</p>
+                                    <span>Las sesiones aparecerán aquí después del primer procesamiento</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tutorial/Ayuda -->
+                        <div class="help-section">
+                            <div class="help-toggle" id="helpToggle" onclick="toggleHelp()">
+                                <i class="fas fa-question-circle"></i>
+                                <span>¿Nuevo aquí? Mira cómo funciona</span>
+                                <i class="fas fa-chevron-down help-arrow"></i>
+                            </div>
+                            
+                            <div class="help-content" id="helpContent" style="display: none;">
+                                <div class="help-steps">
+                                    <div class="help-step">
+                                        <div class="step-number">1</div>
+                                        <div class="step-content">
+                                            <h4>Abre ChatGPT Vision</h4>
+                                            <p>Sube tus imágenes de productos y pide que extraiga nombres y precios</p>
+                                        </div>
+                                    </div>
+                                    <div class="help-step">
+                                        <div class="step-number">2</div>
+                                        <div class="step-content">
+                                            <h4>Pega la lista</h4>
+                                            <p>Copia la lista generada y pégala en el área de texto</p>
+                                        </div>
+                                    </div>
+                                    <div class="help-step">
+                                        <div class="step-number">3</div>
+                                        <div class="step-content">
+                                            <h4>Procesa los productos</h4>
+                                            <p>Haz clic en "Procesar Lista" para comenzar el procesamiento automático</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Pantalla de Carga -->
+                    <div class="processing-screen" id="processingScreen" style="display: none;">
+                        <div class="processing-content">
+                            <div class="processing-animation">
+                                <div class="spinner-glass"></div>
+                            </div>
+                            <h3 class="processing-title">Analizando Lista</h3>
+                            <div class="processing-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                                <span class="progress-text" id="progressText">0%</span>
+                            </div>
+                            <div class="processing-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-box"></i>
+                                    <span>Productos detectados: <strong id="processingProducts">0</strong></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>Total estimado: <strong id="processingTotal">$0</strong></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-building"></i>
+                                    <span>Proveedores: <strong id="processingProviders">0</strong></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span id="processingStatus">Disponible para análisis automático</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pantalla de Selección de Proveedor -->
+                    <div class="provider-selection-screen" id="providerSelectionScreen" style="display: none;">
+                        <!-- Elementos decorativos blur -->
+                        <div class="blur-decoration"></div>
+                        <div class="blur-decoration-2"></div>
+                        
+                        <div class="provider-selection-content">
+                            <div class="provider-header">
+                                <div class="provider-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <h2>Seleccionar Proveedor</h2>
+                                <p>Elige el proveedor para esta sesión de productos</p>
+                            </div>
+
+                            <div class="provider-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-box"></i>
+                                    <span>Productos: <strong id="providerProducts">0</strong></span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>Total: <strong id="providerTotal">$0</strong></span>
+                                </div>
+                            </div>
+
+                            <div class="provider-dropdown-container">
+                                <label class="provider-label">Proveedor *</label>
+                                <div class="provider-dropdown" id="providerDropdown">
+                                    <button class="provider-dropdown-trigger" id="providerTrigger">
+                                        <span class="provider-selected-text">Seleccionar proveedor...</span>
+                                        <i class="fas fa-chevron-down provider-chevron"></i>
+                                    </button>
+                                    <div class="provider-dropdown-content" id="providerDropdownContent">
+                                        <div class="provider-option" data-value="inmoto">Inmoto</div>
+                                        <div class="provider-option" data-value="herman-repuestos">Herman repuestos</div>
+                                        <div class="provider-option" data-value="veda-motors">Veda motors</div>
+                                        <div class="provider-option" data-value="riffel">Riffel</div>
+                                        <div class="provider-option" data-value="wstandard">Wstandard</div>
+                                        <div class="provider-option" data-value="far">Far</div>
+                                        <div class="provider-option" data-value="hamp-original">Hamp original</div>
+                                        <div class="provider-option" data-value="honda">Honda</div>
+                                        <div class="provider-option" data-value="motul">Motul</div>
+                                        <div class="provider-option" data-value="castrol">Castrol</div>
+                                        <div class="provider-option" data-value="elf">Elf</div>
+                                        <div class="provider-option" data-value="shell">Shell</div>
+                                        <div class="provider-option" data-value="gulf">Gulf</div>
+                                        <div class="provider-option" data-value="yuasa">Yuasa</div>
+                                        <div class="provider-option" data-value="bmb">Bmb</div>
+                                        <div class="provider-option" data-value="osaka">Osaka</div>
+                                        <div class="provider-option" data-value="nsu">Nsu</div>
+                                    </div>
+                                </div>
+                                <div class="provider-error" id="providerError" style="display: none;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Debes seleccionar un proveedor para continuar
+                                </div>
+                            </div>
+
+                            <div class="provider-actions">
+                                <button class="btn-continue-to-phase2" id="btnContinueToPhase2" onclick="continueToPhase2()" disabled>
+                                    <i class="fas fa-arrow-right"></i>
+                                    Continuar a Procesamiento
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FASE 2: Pantalla de Procesamiento Individual -->
+                    <div class="individual-processing-screen" id="individualProcessingScreen" style="display: none;">
+                        <!-- Elementos decorativos blur -->
+                        <div class="blur-decoration"></div>
+                        <div class="blur-decoration-2"></div>
+                        
+                        <!-- Header Superior -->
+                        <div class="processing-header">
+                            <button class="btn-back-processing" id="btnBackToCreator" onclick="backToCreator()">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            
+                            <div class="current-product-info">
+                                <div class="product-name-section">
+                                    <h2 class="current-product-name" id="currentProcessingProductName">Aceite Gulf 20W-50</h2>
+                                    <button class="btn-copy-product" onclick="copyCurrentProduct()" title="Copiar nombre del producto">
+                                        <i class="fas fa-copy"></i>
+                                        Copiar
+                                    </button>
+                                </div>
+                                <span class="current-product-price" id="currentProcessingProductPrice">$2,450</span>
+                            </div>
+                            
+                            <div class="product-counter">
+                                <span id="currentProcessingIndex">1</span> / <span id="totalProcessingProducts">3</span>
+                                <div class="navigation-arrows">
+                                    <button class="nav-arrow" id="prevProductBtn" onclick="previousProduct()">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="nav-arrow" id="nextProductBtn" onclick="nextProduct()">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Drag & Drop Principal -->
+                        <div class="main-drag-drop-area" id="mainDragDropArea">
+                            <div class="drag-drop-content">
+                                <div class="drag-drop-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h3>Arrastra la imagen del producto aquí</h3>
+                                <p>o haz clic para seleccionar desde tu computadora</p>
+                                <span class="supported-formats">Formatos: JPG, PNG, WEBP</span>
+                            </div>
+                            <input type="file" id="mainImageInput" accept="image/*" style="display: none;">
+                        </div>
+
+                        <!-- Dos Tarjetas Principales -->
+                        <div class="processing-cards-container">
+                            <!-- Tarjeta Izquierda: Imagen Original -->
+                            <div class="processing-card original-card">
+                                <div class="card-header">
+                                    <h4><i class="fas fa-image"></i> Imagen Original</h4>
+                                </div>
+                                <div class="image-preview-area" id="originalImagePreview">
+                                    <div class="image-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <p>La imagen aparecerá aquí</p>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-process-image" id="btnProcessImage" onclick="processCurrentImage()" disabled>
+                                        <i class="fas fa-magic"></i>
+                                        Procesar Imagen
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tarjeta Derecha: Resultado Procesado -->
+                            <div class="processing-card result-card">
+                                <div class="card-header">
+                                    <h4><i class="fas fa-wand-magic-sparkles"></i> Resultado Procesado</h4>
+                                    <div class="processing-status" id="imageProcessingStatus">
+                                        <i class="fas fa-clock"></i>
+                                        Esperando imagen
+                                    </div>
+                                </div>
+                                <div class="image-result-area" id="processedImageResult">
+                                    <div class="result-placeholder">
+                                        <i class="fas fa-wand-magic-sparkles"></i>
+                                        <p>El resultado aparecerá aquí</p>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-download-result" id="btnDownloadResult" onclick="downloadProcessedImage()" disabled>
+                                        <i class="fas fa-download"></i>
+                                        Descargar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Carrusel de Templates -->
+                        <div class="templates-carousel-section">
+                            <div class="carousel-header">
+                                <h3><i class="fas fa-palette"></i> Seleccionar Template</h3>
+                                <p>Elige el diseño para tu oferta</p>
+                            </div>
+                            
+                            <div class="templates-carousel-container">
+                                <button class="carousel-nav-btn carousel-prev" id="templatesPrevBtn" onclick="previousTemplate()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                
+                                <div class="templates-carousel" id="templatesCarousel">
+                                    <!-- Los templates se cargarán dinámicamente -->
+                                </div>
+                                
+                                <button class="carousel-nav-btn carousel-next" id="templatesNextBtn" onclick="nextTemplate()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="selected-template-info">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Template seleccionado: <strong id="selectedTemplateDisplay">Template 1</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Galería de Procesados -->
+                        <div class="processed-gallery-section">
+                            <div class="gallery-header">
+                                <h3><i class="fas fa-images"></i> Imágenes Procesadas (<span id="processedImageCounter">0</span>)</h3>
+                                <div class="gallery-actions">
+                                    <button class="btn-save-session" id="btnSaveSession" onclick="saveCurrentSession()" disabled>
+                                        <i class="fas fa-save"></i>
+                                        Guardar Sesión
+                                    </button>
+                                    <button class="btn-download-all" id="btnDownloadAll" onclick="downloadAllImages()" disabled>
+                                        <i class="fas fa-download"></i>
+                                        Descargar Todo
+                                    </button>
+                                    <button class="btn-whatsapp" id="btnWhatsApp" onclick="sendToWhatsApp()" disabled>
+                                        <i class="fab fa-whatsapp"></i>
+                                        Enviar a WhatsApp
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="processed-gallery" id="processedGalleryContainer">
+                                <div class="no-images">
+                                    <i class="fas fa-images"></i>
+                                    <p>Las imágenes procesadas aparecerán aquí</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gestión por Proveedores -->
+                        <div class="providers-management-section" id="providersManagementSection" style="display: none;">
+                            <div class="providers-header">
+                                <h3><i class="fas fa-building"></i> Gestión por Proveedores</h3>
+                                <p>Ajusta precios por proveedor</p>
+                            </div>
+                            
+                            <div class="providers-grid" id="providersGrid">
+                                <!-- Los proveedores se cargarán dinámicamente -->
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción Final -->
+                        <div class="final-actions">
+                            <button class="btn-whatsapp" id="btnSendToWhatsApp" onclick="sendToWhatsApp()" disabled>
+                                <i class="fab fa-whatsapp"></i>
+                                Enviar a WhatsApp
+                            </button>
+                            <button class="btn-save-session" id="btnSaveSession" onclick="saveCurrentSession()">
+                                <i class="fas fa-save"></i>
+                                Guardar Sesión
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pantalla inicial original (oculta por defecto) -->
+                    <div class="steps-initial-view" id="stepsInitial" style="display: none;">
+                            <!-- Botones superiores -->
+                            <div class="buttons-row">
+                                <button class="btn-chatgpt-vision animated-btn" onclick="openChatGPTVision()">
+                                    <div class="btn-content">
+                                        <i class="fas fa-robot"></i>
+                                        <span>Abrir ChatGPT Visión</span>
+                                    </div>
+                                </button>
+                                <button class="btn-process-list animated-btn" onclick="startProcessing()">
+                                    <div class="btn-content">
+                                        <i class="fas fa-cogs"></i>
+                                        <span>Procesar Lista</span>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <!-- Contenido de pasos -->
+                            <div class="steps-content">
+                                <!-- Paso 1: ChatGPT Visión -->
+                                <div class="step-card step-1">
+                                    <h2>Paso 1: Análisis con IA</h2>
+                                    <p>Sube tus imágenes a ChatGPT Vision para extraer automáticamente nombres y precios</p>
+                                    <div class="instructions">
+                                        <h4>Instrucciones:</h4>
+                                        <ol>
+                                            <li>Haz clic en el botón para abrir ChatGPT Vision</li>
+                                            <li>Sube tus imágenes de productos</li>
+                                            <li>Pide: "Extrae nombre, precio y descripción de cada producto en formato lista"</li>
+                                            <li>Copia la lista generada</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                
+                                <!-- Paso 2: Procesar Lista -->
+                                <div class="step-card step-2">
+                                    <h2>Paso 2: Procesar Lista</h2>
+                                    <p>Pega la lista generada por ChatGPT y procesa los productos</p>
+                                    <textarea 
+                                        id="productListInput" 
+                                        placeholder="Ejemplo:&#10;- Aceite Gulf 20W-50 - $2,450 - Aceite sintético&#10;- Kit Transmisión Honda - $8,900 - Kit completo&#10;- Filtro K&N - $1,200 - Filtro alto rendimiento"
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pantalla de carga -->
+                    <div class="loading-screen" id="loadingScreen" style="display: none;">
+                        <div class="loading-animation">
+                            <div class="mmr-spinner"></div>
+                            <div class="loading-text">Procesando productos</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: Sistema de procesamiento REORGANIZADO Y MEJORADO -->
+                    <div class="step3-container" id="step3Container" style="display: none;">
+                        
+                        <!-- Header con información del producto actual -->
+                        <div class="step3-header">
+                            <button class="btn-back" onclick="window.appController.backToInitialSteps()">
+                                <i class="fas fa-arrow-left"></i>
+                                Volver
+                            </button>
+                            
+                            <div class="product-header-info">
+                                <div class="product-title-section">
+                                    <h1 id="currentProductName" class="current-product-title">Producto 1</h1>
+                                    <button id="copyTitleBtn" class="btn-copy-title" onclick="window.appController.copyCurrentProduct()">
+                                        <i class="fas fa-copy"></i>
+                                        Copiar
+                                    </button>
+                                </div>
+                                <div class="progress-info">
+                                    <span class="progress-counter">
+                                        <span id="processedCount">0</span> / <span id="totalCount">0</span> productos
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Zona de drag and drop prominente -->
+                        <div class="drag-drop-main" id="dragDropArea">
+                            <div class="drag-content">
+                                <div class="drag-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h3>Arrastra la imagen del producto actual aquí</h3>
+                                <p>o haz clic para seleccionar archivo</p>
+                                <button class="btn-select-file" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open"></i>
+                                    Seleccionar Archivo
+                                </button>
+                                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+
+                        <!-- Layout de procesamiento en dos columnas -->
+                        <div class="processing-layout">
+                            
+                            <!-- Columna izquierda: Producto actual -->
+                            <div class="product-current-section">
+                                <div class="section-header">
+                                    <h3>Producto Actual</h3>
+                                    <div class="product-price" id="currentProductPrice">$0</div>
+                                </div>
+                                
+                                <div class="product-details">
+                                    <div class="product-counter">
+                                        <i class="fas fa-list-ol"></i>
+                                        <span id="currentProductIndex">1</span> de <span id="totalProductsCount">0</span>
+                                    </div>
+                                </div>
+
+                                <div class="image-preview-area" id="imagePreviewArea">
+                                    <div class="image-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <p>La imagen aparecerá aquí</p>
+                                    </div>
+                                </div>
+
+                                <div class="process-actions">
+                                    <button class="btn-process-main" id="processBtn" onclick="window.appController.processCurrentProduct()">
+                                        <i class="fas fa-magic"></i>
+                                        Procesar Producto
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Columna derecha: Resultado -->
+                            <div class="product-result-section">
+                                <div class="section-header">
+                                    <h3>Resultado</h3>
+                                    <div class="status-badge" id="statusIndicator">
+                                        <i class="fas fa-clock"></i>
+                                        Esperando
+                                    </div>
+                                </div>
+
+                                <div class="result-preview-area" id="resultPreview">
+                                    <div class="result-placeholder">
+                                        <i class="fas fa-wand-magic-sparkles"></i>
+                                        <p>El resultado aparecerá aquí</p>
+                                    </div>
+                                </div>
+
+                                <div class="result-actions">
+                                    <button class="btn-download-result" id="downloadBtn" onclick="window.appController.downloadCurrent()" disabled>
+                                        <i class="fas fa-download"></i>
+                                        Descargar
+                                    </button>
+                                    <button class="btn-next-product" id="nextBtn" onclick="window.appController.nextProduct()" disabled>
+                                        <i class="fas fa-arrow-right"></i>
+                                        Siguiente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selector de Templates -->
+                        <div class="template-selection-section" id="templateSelector">
+                            <div class="template-section-header">
+                                <div class="template-title">
+                                    <i class="fas fa-palette"></i>
+                                    <h3>Seleccionar Template</h3>
+                                </div>
+                                <p class="template-description">Elige el diseño para tu oferta</p>
+                            </div>
+                            
+                            <div class="template-carousel-wrapper">
+                                <button class="carousel-nav-btn carousel-prev" onclick="window.appController.previousTemplate()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                
+                                <div class="template-carousel-container">
+                                    <div class="template-carousel" id="templateCarousel">
+                                        <!-- Los templates se cargarán dinámicamente -->
+                                    </div>
+                                </div>
+                                
+                                <button class="carousel-nav-btn carousel-next" onclick="window.appController.nextTemplate()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="template-status" id="selectedTemplateInfo">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Template seleccionado: <strong id="selectedTemplateName">Template 1</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Productos Completados -->
+                        <div class="completed-section" id="processedProducts">
+                            <div class="completed-header">
+                                <div class="completed-title">
+                                    <i class="fas fa-check-double"></i>
+                                    <h3>Productos Completados</h3>
+                                </div>
+                                <button class="btn-download-all" id="downloadAllProcessedBtn" onclick="window.appController.downloadAllProcessed()" style="display: none;">
+                                    <i class="fas fa-download"></i>
+                                    Descargar Todo
+                                </button>
+                            </div>
+                            <div class="completed-grid" id="processedGrid">
+                                <!-- Los productos procesados aparecerán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics" class="tab-content">
+                    <div class="upload-section">
+                        <h3 style="margin-bottom: 16px; color: var(--text); font-size: 18px; font-weight: 600;">
+                            <i class="fas fa-chart-bar" style="color: var(--mmr-yellow); margin-right: 8px;"></i>
+                            Analytics de Datos del Chatbot
+                        </h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">
+                            Arrastra tu archivo CSV con los datos del chatbot para generar análisis automáticos
+                        </p>
+                        
+                        <div class="upload-area" id="csvDropArea" ondrop="handleCSVDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('csvAnalyticsInput').click()">
+                            <div class="upload-icon">
+                                <i class="fas fa-file-csv"></i>
+                            </div>
+                            <div class="upload-text">Arrastra tu archivo CSV aquí</div>
+                            <div class="upload-subtext">o haz clic para seleccionar el archivo (.csv)</div>
+                            <input type="file" id="csvAnalyticsInput" accept=".csv" style="display: none;" onchange="handleCSVAnalytics(event)">
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="document.getElementById('csvAnalyticsInput').click()" style="width: 100%; justify-content: center;">
+                                <i class="fas fa-upload"></i>
+                                Seleccionar Archivo CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Results -->
+                    <div id="analyticsResults" style="display: none;">
+                        <div class="cards-grid" style="margin-top: 24px;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">Total Contactos</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                                <div class="card-value" id="totalContacts">0</div>
+                                <div class="card-description">Contactos procesados</div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">Consultas Activas</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-comment-dots"></i>
+                                    </div>
+                                </div>
+                                <div class="card-value" id="activeQueries">0</div>
+                                <div class="card-description">Con input de usuario</div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">Emprendedores</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-rocket"></i>
+                                    </div>
+                                </div>
+                                <div class="card-value" id="entrepreneurs">0</div>
+                                <div class="card-description">Perfil emprendedor</div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title">Mecánicos/Locales</div>
+                                    <div class="card-icon">
+                                        <i class="fas fa-wrench"></i>
+                                    </div>
+                                </div>
+                                <div class="card-value" id="mechanics">0</div>
+                                <div class="card-description">Talleres detectados</div>
+                            </div>
+                        </div>
+
+                        <!-- Analytics Chart -->
+                        <div class="chart-container" style="margin-top: 24px;">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Distribución de Contactos</h3>
+                                <div class="chart-description">Análisis de tipos de usuarios del chatbot</div>
+                            </div>
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="analyticsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Tabs -->
+                <div id="projects" class="tab-content">
+                    <div style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+                        <div style="width: 80px; height: 80px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                            <i class="fas fa-folder" style="font-size: 32px; color: var(--blue-500);"></i>
+                        </div>
+                        <h3 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Projects</h3>
+                        <p style="max-width: 400px; margin: 0 auto;">Gestiona tus proyectos y organiza tu trabajo de manera eficiente.</p>
+                    </div>
+                </div>
+
+                <div id="team" class="tab-content">
+                    <div style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+                        <div style="width: 80px; height: 80px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                            <i class="fas fa-users" style="font-size: 32px; color: var(--green-500);"></i>
+                        </div>
+                        <h3 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Team</h3>
+                        <p style="max-width: 400px; margin: 0 auto;">Administra tu equipo y colabora en proyectos.</p>
+                    </div>
+                </div>
+
+                <div id="data-library" class="tab-content">
+                    <div style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+                        <div style="width: 80px; height: 80px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                            <i class="fas fa-database" style="font-size: 32px; color: var(--purple-500);"></i>
+                        </div>
+                        <h3 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Data Library</h3>
+                        <p style="max-width: 400px; margin: 0 auto;">Accede a tu biblioteca de datos y recursos.</p>
+                    </div>
+                </div>
+
+                <div id="reports" class="tab-content">
+                    <div style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+                        <div style="width: 80px; height: 80px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                            <i class="fas fa-file-alt" style="font-size: 32px; color: var(--orange-500);"></i>
+                        </div>
+                        <h3 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Reports</h3>
+                        <p style="max-width: 400px; margin: 0 auto;">Genera y visualiza reportes detallados.</p>
+                    </div>
+                </div>
+
+                <div id="word-assistant" class="tab-content">
+                    <div style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+                        <div style="width: 80px; height: 80px; background: var(--surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                            <i class="fas fa-robot" style="font-size: 32px; color: var(--mmr-yellow);"></i>
+                        </div>
+                        <h3 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Word Assistant</h3>
+                        <p style="max-width: 400px; margin: 0 auto;">Asistente de IA para ayudarte con la redacción y contenido.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Dashboard JavaScript -->
+    <script src="{{ url_for('static', filename='js/dashboard-test.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard-clean.js') }}"></script>
+    
+    <!-- Global functions for HTML onclick handlers -->
+    <script>
+        // Global functions that need to be accessible from HTML onclick handlers
+        function openChatGPTVision() {
+            // Abrir el ChatGPT específico para procesamiento de facturas
+            window.open('https://chatgpt.com/g/g-68989b7ef8a0819197df0ea0e8a222c5-procesador-de-facturitasasi', '_blank');
+        }
+
+        function startProcessing() {
+            console.log('🔥 startProcessing HTML llamada');
+            
+            // Priorizar offers-creator sobre appController
+            if (window.offersCreator && window.offersCreator.startProcessing) {
+                console.log('🎯 Usando offers-creator');
+                window.offersCreator.startProcessing();
+            } else if (window.appController && window.appController.startProcessing) {
+                console.log('🎯 Usando app-controller');
+                window.appController.startProcessing();
+            } else {
+                console.error('❌ Ningún controlador disponible');
+                alert('El sistema se está inicializando. Recarga la página e intenta de nuevo.');
+            }
+        }
+
+        function updateOverview(period) {
+            console.log('Updating overview for period:', period);
+            // Remove active class from all filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Update chart data based on period
+            if (window.appController && window.appController.activityChart) {
+                console.log('Chart updated for period:', period);
+            }
+        }
+
+    </script>
+    
+    <!-- CSV Analytics Script -->
+    <script>
+        // CSV Analytics functions
+        function handleCSVDrop(event) {
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                handleCSVAnalytics({ target: { files: files } });
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleCSVAnalytics(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'text/csv') {
+                console.log('Processing CSV file:', file.name);
+                // Here you would process the CSV file
+                // For now, just show a success message
+                setTimeout(() => {
+                    const analyticsResults = document.getElementById('analyticsResults');
+                    if (analyticsResults) {
+                        analyticsResults.style.display = 'block';
+                        // Update with sample data
+                        const totalContacts = document.getElementById('totalContacts');
+                        const activeQueries = document.getElementById('activeQueries');
+                        const entrepreneurs = document.getElementById('entrepreneurs');
+                        const mechanics = document.getElementById('mechanics');
+                        
+                        if (totalContacts) totalContacts.textContent = '847';
+                        if (activeQueries) activeQueries.textContent = '234';
+                        if (entrepreneurs) entrepreneurs.textContent = '156';
+                        if (mechanics) mechanics.textContent = '91';
+                    }
+                }, 1000);
+            }
+        }
+
+        // Initialize drag & drop functionality for the main drag zone
+        function initializeDragDrop() {
+            const dragDropArea = document.getElementById('dragDropArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (dragDropArea && fileInput) {
+                // Prevent default drag behaviors
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, preventDefaults, false);
+                    document.body.addEventListener(eventName, preventDefaults, false);
+                });
+
+                // Highlight drop area when item is dragged over it
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, highlight, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, unhighlight, false);
+                });
+
+                // Handle dropped files
+                dragDropArea.addEventListener('drop', handleDrop, false);
+            }
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            e.currentTarget.classList.add('drag-highlight');
+        }
+
+        function unhighlight(e) {
+            e.currentTarget.classList.remove('drag-highlight');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    // Handle image file
+                    if (window.appController && window.appController.handleImageUpload) {
+                        window.appController.handleImageUpload(file);
+                    } else {
+                        console.log('Image file dropped:', file.name);
+                        // Fallback: show file input
+                        const fileInput = document.getElementById('fileInput');
+                        if (fileInput) {
+                            fileInput.files = files;
+                            fileInput.dispatchEvent(new Event('change'));
+                        }
+                    }
+                } else {
+                    console.log('Please drop an image file');
+                    alert('Por favor, arrastra solo archivos de imagen');
+                }
+            }
+        }
+
+        // Wait for everything to load before initializing drag & drop
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌐 [TEMPLATE] DOM loaded, waiting for dashboard controller...');
+            console.log('🌐 [TEMPLATE] Estado inicial:', {
+                DashboardController: typeof DashboardController !== 'undefined',
+                appController: !!window.appController
+            });
+            
+            // Initialize drag & drop after a short delay
+            setTimeout(initializeDragDrop, 500);
+            
+            // Simple check every second for 60 seconds
+            let checkAttempts = 0;
+            const maxAttempts = 60; // 60 seconds total
+            
+            const checkController = setInterval(() => {
+                checkAttempts++;
+                
+                if (window.appController) {
+                    console.log('✅ [TEMPLATE] Dashboard Controller is now available!');
+                    console.log('✅ [TEMPLATE] Controller type:', typeof window.appController);
+                    clearInterval(checkController);
+                } else {
+                    if (checkAttempts % 5 === 0) { // Log every 5 seconds
+                        console.log(`⏳ [TEMPLATE] Still waiting... (${checkAttempts}/${maxAttempts}s)`);
+                        console.log(`🔍 [TEMPLATE] Debug info:`, {
+                            DashboardController: typeof DashboardController !== 'undefined',
+                            appController: !!window.appController,
+                            scripts: Array.from(document.scripts).map(s => s.src).filter(s => s.includes('dashboard'))
+                        });
+                    }
+                    
+                    if (checkAttempts >= maxAttempts) {
+                        clearInterval(checkController);
+                        console.error('❌ [TEMPLATE] Dashboard Controller failed to load after 60 seconds');
+                        console.error('❌ [TEMPLATE] Final debug info:', {
+                            DashboardController: typeof DashboardController !== 'undefined',
+                            appController: !!window.appController,
+                            windowKeys: Object.keys(window).filter(k => k.includes('app') || k.includes('dashboard')),
+                            scripts: Array.from(document.scripts).map(s => s.src)
+                        });
+                        
+                        // Try to initialize manually as last resort
+                        console.log('🔄 [TEMPLATE] Attempting manual initialization as last resort...');
+                        if (typeof DashboardController !== 'undefined') {
+                            try {
+                                window.appController = new DashboardController();
+                                console.log('✅ [TEMPLATE] Manual initialization successful!');
+                            } catch (error) {
+                                console.error('❌ [TEMPLATE] Manual initialization failed:', error);
+                                console.error('❌ [TEMPLATE] Error stack:', error.stack);
+                            }
+                        } else {
+                            console.error('❌ [TEMPLATE] DashboardController class not found - script may not have loaded');
+                        }
+                    }
+                }
+            }, 1000);
+        });
+    </script>
+    
+    <!-- CSV Analytics Script -->
+    <script>
+        // CSV Analytics functions
+        function handleCSVDrop(event) {
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                handleCSVAnalytics({ target: { files: files } });
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleCSVAnalytics(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'text/csv') {
+                console.log('Processing CSV file:', file.name);
+                // Here you would process the CSV file
+                // For now, just show a success message
+                setTimeout(() => {
+                    document.getElementById('analyticsResults').style.display = 'block';
+                    // Update with sample data
+                    document.getElementById('totalContacts').textContent = '847';
+                    document.getElementById('activeQueries').textContent = '234';
+                    document.getElementById('entrepreneurs').textContent = '156';
+                    document.getElementById('mechanics').textContent = '91';
+                }, 1000);
+            }
+        }
+
+        // Initialize drag & drop functionality for the main drag zone
+        function initializeDragDrop() {
+            const dragDropArea = document.getElementById('dragDropArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (dragDropArea && fileInput) {
+                // Prevent default drag behaviors
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, preventDefaults, false);
+                    document.body.addEventListener(eventName, preventDefaults, false);
+                });
+
+                // Highlight drop area when item is dragged over it
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, highlight, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, unhighlight, false);
+                });
+
+                // Handle dropped files
+                dragDropArea.addEventListener('drop', handleDrop, false);
+            }
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            e.currentTarget.classList.add('drag-highlight');
+        }
+
+        function unhighlight(e) {
+            e.currentTarget.classList.remove('drag-highlight');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    // Handle image file
+                    if (window.appController) {
+                        window.appController.handleImageUpload(file);
+                    }
+                    console.log('Image file dropped:', file.name);
+                } else {
+                    console.log('Please drop an image file');
+                }
+            }
+        }
+
+        // Initialize drag & drop when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initializeDragDrop, 100); // Small delay to ensure elements are ready
+        });
+    </script>
+    </script>
+
+    <!-- Modal del Creador de Ofertas -->
+    <div class="offer-creator-modal" id="offerCreatorModal">
+        <div class="offer-creator-container">
+            <div class="offer-creator-header">
+                <div class="offer-creator-title">
+                    <i class="fas fa-magic"></i>
+                    Creador de Ofertas Avanzado
+                </div>
+                <button class="close-creator-btn" onclick="closeOfferCreator()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="offer-creator-content">
+                <!-- Sección de Configuración -->
+                <div class="offer-config-section">
+                    <div class="config-section-title">
+                        <i class="fas fa-cog"></i>
+                        Configuración de la Oferta
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Producto</label>
+                        <input type="text" class="form-input" id="offerProductName" placeholder="Ej: Aceite Gulf 20W-50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Precio Original</label>
+                        <input type="number" class="form-input" id="offerOriginalPrice" placeholder="2450" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Descuento (%)</label>
+                        <div class="discount-slider-container">
+                            <input type="range" class="discount-slider" id="discountSlider" min="5" max="70" value="20">
+                            <div class="discount-value" id="discountValue">20%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Válido Hasta</label>
+                        <input type="date" class="form-input" id="validUntilInput">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Descripción (Opcional)</label>
+                        <textarea class="form-input form-textarea" id="offerDescription" placeholder="Aceite sintético de alta calidad..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Colores del Diseño</label>
+                        <div class="color-picker-group">
+                            <div class="color-picker-item">
+                                <input type="color" class="color-picker" data-color-type="background" value="#1a1a1a">
+                                <div class="color-label">Fondo</div>
+                            </div>
+                            <div class="color-picker-item">
+                                <input type="color" class="color-picker" data-color-type="accent" value="#FFD700">
+                                <div class="color-label">Acento</div>
+                            </div>
+                            <div class="color-picker-item">
+                                <input type="color" class="color-picker" data-color-type="text" value="#ffffff">
+                                <div class="color-label">Texto</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sección de Templates y Vista Previa -->
+                <div class="offer-preview-section">
+                    <div class="template-selection-section">
+                        <div class="config-section-title">
+                            <i class="fas fa-palette"></i>
+                            Seleccionar Template
+                        </div>
+                        <div class="offer-template-grid" id="offerTemplateGrid">
+                            <!-- Los templates se cargarán dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Vista Previa -->
+                    <div class="offer-preview-container" id="offerPreviewContainer">
+                        <div class="config-section-title">
+                            <i class="fas fa-eye"></i>
+                            Vista Previa
+                        </div>
+                        <div id="offerPreviewElement">
+                            <!-- La vista previa aparecerá aquí -->
+                        </div>
+                    </div>
+                    
+                    <!-- Resultado -->
+                    <div class="offer-result-section" id="offerResultSection">
+                        <div class="config-section-title">
+                            <i class="fas fa-check-circle"></i>
+                            Oferta Generada
+                        </div>
+                        <img class="offer-result-image" id="offerResultImage" alt="Oferta generada">
+                        <div class="offer-result-actions">
+                            <button class="btn-result-action btn-download-offer" id="downloadOfferBtn" onclick="downloadOffer()" disabled>
+                                <i class="fas fa-download"></i>
+                                Descargar
+                            </button>
+                            <button class="btn-result-action btn-share-offer" id="shareOfferBtn" onclick="shareOffer()" disabled>
+                                <i class="fas fa-share"></i>
+                                Compartir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Barra de Progreso -->
+            <div class="offer-generation-progress" id="offerGenerationProgress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Botones de Acción -->
+            <div class="offer-actions">
+                <button class="btn-offer-action btn-preview-offer" id="previewOfferBtn" onclick="toggleOfferPreview()">
+                    <i class="fas fa-eye"></i>
+                    Vista Previa
+                </button>
+                <button class="btn-offer-action btn-generate-offer" id="generateOfferBtn" onclick="generateOffer()">
+                    <i class="fas fa-magic"></i>
+                    Generar Oferta
+                </button>
+                <button class="btn-offer-action btn-save-offer" id="saveOfferBtn" onclick="saveOffer()" disabled>
+                    <i class="fas fa-save"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición de Sesiones -->
+    <div class="session-edit-modal" id="sessionEditModal">
+        <div class="session-edit-container">
+            <div class="session-edit-header">
+                <div class="session-edit-title" id="sessionEditTitle">
+                    <i class="fas fa-edit"></i>
+                    Editar Sesión
+                </div>
+                <button class="close-session-edit-btn" onclick="closeSessionEdit()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="session-edit-content">
+                <!-- Información de la Sesión -->
+                <div class="session-info-section">
+                    <div class="session-info-header" id="sessionInfoHeader">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    
+                    <!-- Ajustes Masivos -->
+                    <div class="mass-adjustments-section">
+                        <div class="section-title">
+                            <i class="fas fa-sliders-h"></i>
+                            Ajustes Masivos
+                        </div>
+                        <div class="adjustment-buttons">
+                            <button class="btn-adjustment" onclick="applyMassAdjustment(10)">+10%</button>
+                            <button class="btn-adjustment" onclick="applyMassAdjustment(5)">+5%</button>
+                            <button class="btn-adjustment" onclick="applyMassAdjustment(-5)">-5%</button>
+                            <button class="btn-adjustment" onclick="applyMassAdjustment(-10)">-10%</button>
+                            <div class="custom-adjustment">
+                                <input type="number" id="customAdjustmentValue" placeholder="%">
+                                <button onclick="applyCustomAdjustment()">Aplicar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Productos Individuales -->
+                    <div class="products-section">
+                        <div class="section-title">
+                            <i class="fas fa-box"></i>
+                            Productos Individuales
+                        </div>
+                        <div class="products-list" id="sessionProductsList">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Imágenes Procesadas -->
+                    <div class="processed-images-section">
+                        <div class="section-title">
+                            <i class="fas fa-images"></i>
+                            Imágenes Procesadas
+                        </div>
+                        <div class="processed-images-grid" id="sessionImagesGrid">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botones de Acción -->
+            <div class="session-edit-actions">
+                <button class="btn-session-action btn-reprocess" onclick="reprocessSession()">
+                    <i class="fas fa-sync"></i>
+                    Reprocesar Todo
+                </button>
+                <button class="btn-session-action btn-whatsapp" onclick="sendSessionToWhatsApp()">
+                    <i class="fab fa-whatsapp"></i>
+                    Enviar a WhatsApp
+                </button>
+                <button class="btn-session-action btn-save-changes" onclick="saveSessionChanges()">
+                    <i class="fas fa-save"></i>
+                    Guardar Cambios
+                </button>
+                <button class="btn-session-action btn-close" onclick="closeSessionEdit()">
+                    <i class="fas fa-times"></i>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Script -->
+    <script src="{{ url_for('static', filename='js/core/offers-creator.js') }}"></script>
+</body>
+</html>

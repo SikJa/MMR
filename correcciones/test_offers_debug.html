@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Offers Debug - Procesamiento de Imágenes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/offers-creator.css">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .debug-header {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .debug-section {
+            background: #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border-left: 4px solid #f44336;
+        }
+        .debug-button {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+        }
+        .debug-button:hover {
+            background: #d32f2f;
+        }
+        .phase2-container {
+            background: #222;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .processing-header {
+            background: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .current-product-info {
+            text-align: center;
+        }
+        .current-product-name {
+            color: #FFD700;
+            font-size: 24px;
+            margin: 0;
+        }
+        .current-product-price {
+            color: #4CAF50;
+            font-size: 18px;
+        }
+        .product-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+        .nav-arrow {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .nav-arrow:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .main-drag-drop-area {
+            background: #333;
+            border: 2px dashed #666;
+            border-radius: 12px;
+            padding: 60px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .main-drag-drop-area:hover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+        }
+        .main-drag-drop-area.drag-over {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        .processing-cards-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .processing-card {
+            flex: 1;
+            background: #333;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .card-header {
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .card-header h4 {
+            margin: 0;
+            color: #FFD700;
+        }
+        .image-preview-area, .result-preview-area {
+            min-height: 200px;
+            background: #222;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .image-placeholder, .result-placeholder {
+            text-align: center;
+            color: #666;
+        }
+        .image-placeholder i, .result-placeholder i {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .btn-process-image, .btn-download-result {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+        .btn-process-image:disabled, .btn-download-result:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .processing-status {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+        .processing-status.processing {
+            color: #2196F3;
+        }
+        .processing-status.completed {
+            color: #4CAF50;
+        }
+        .processing-status.error {
+            color: #f44336;
+        }
+        .log-container {
+            background: #222;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 3px 0;
+            padding: 2px 0;
+        }
+        .log-success { color: #4CAF50; }
+        .log-error { color: #f44336; }
+        .log-warning { color: #FF9800; }
+        .log-info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>🐛 Test Offers Debug - Procesamiento de Imágenes</h1>
+            <p>Diagnóstico y prueba del procesamiento de imágenes en Fase 2</p>
+        </div>
+
+        <div class="debug-section">
+            <h3>🔧 Controles de Debug</h3>
+            <button class="debug-button" onclick="initializePhase2()">🚀 Inicializar Fase 2</button>
+            <button class="debug-button" onclick="testImageUpload()">📸 Test Subida Imagen</button>
+            <button class="debug-button" onclick="testProcessImage()">🎨 Test Procesar Imagen</button>
+            <button class="debug-button" onclick="checkFunctions()">📊 Verificar Funciones</button>
+        </div>
+
+        <div class="phase2-container">
+            <div class="processing-header">
+                <button class="debug-button" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                
+                <div class="current-product-info">
+                    <h2 class="current-product-name" id="currentProcessingProductName">Aceite Gulf 20W-50</h2>
+                    <span class="current-product-price" id="currentProcessingProductPrice">$2,450</span>
+                </div>
+                
+                <div class="product-counter">
+                    <span><span id="currentProcessingIndex">1</span> / <span id="totalProcessingProducts">3</span></span>
+                    <button class="nav-arrow" id="prevProductBtn" onclick="previousProduct()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-arrow" id="nextProductBtn" onclick="nextProduct()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="main-drag-drop-area" id="mainDragDropArea">
+                <div class="drag-drop-content">
+                    <div class="drag-drop-icon">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #FFD700; margin-bottom: 20px;"></i>
+                    </div>
+                    <h3 style="color: white; margin: 10px 0;">Arrastra la imagen del producto aquí</h3>
+                    <p style="color: #999;">o haz clic para seleccionar desde tu computadora</p>
+                    <span style="color: #666; font-size: 12px;">Formatos: JPG, PNG, WEBP</span>
+                </div>
+                <input type="file" id="mainImageInput" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="processing-cards-container">
+                <div class="processing-card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-image"></i> Imagen Original</h4>
+                    </div>
+                    <div class="image-preview-area" id="originalImagePreview">
+                        <div class="image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>La imagen aparecerá aquí</p>
+                        </div>
+                    </div>
+                    <button class="btn-process-image" id="btnProcessImage" onclick="processCurrentImage()" disabled>
+                        <i class="fas fa-magic"></i> Procesar Imagen
+                    </button>
+                    <div class="processing-status" id="imageProcessingStatus">
+                        <i class="fas fa-clock"></i> Esperando imagen
+                    </div>
+                </div>
+
+                <div class="processing-card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-wand-magic-sparkles"></i> Resultado Procesado</h4>
+                    </div>
+                    <div class="result-preview-area" id="processedImageResult">
+                        <div class="result-placeholder">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                            <p>El resultado aparecerá aquí</p>
+                        </div>
+                    </div>
+                    <button class="btn-download-result" id="btnDownloadResult" disabled>
+                        <i class="fas fa-download"></i> Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>📋 Log de Debug</h3>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry log-info">[INICIO] Sistema de debug cargado</div>
+            </div>
+            <button class="debug-button" onclick="clearLog()">🗑️ Limpiar Log</button>
+        </div>
+    </div>
+
+    <!-- Overlay de procesamiento -->
+    <div id="imageProcessingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: #333; padding: 40px; border-radius: 12px; text-align: center;">
+            <div style="width: 60px; height: 60px; border: 4px solid #FFD700; border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div id="processingText">
+                <h4 style="color: white; margin: 0;">Procesando imagen...</h4>
+                <p style="color: #999; margin: 10px 0 0 0;">Aplicando mejoras con IA</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        // Crear una versión simplificada para debug
+        class DebugOffersCreator {
+            constructor() {
+                this.currentAnalysis = {
+                    products: [
+                        {name: 'Aceite Gulf 20W-50', price: 2450},
+                        {name: 'Filtro Honda Civic', price: 850},
+                        {name: 'Bujías NGK', price: 1200}
+                    ],
+                    totalEstimated: 4500,
+                    providers: ['Gulf', 'Honda', 'NGK'],
+                    isValid: true
+                };
+                this.currentProcessingIndex = 0;
+                this.selectedTemplate = 'plantilla_1.png';
+                this.currentImageFile = null;
+                this.processedImages = [];
+                
+                this.init();
+            }
+
+            init() {
+                log('🚀 Debug OffersCreator inicializado', 'success');
+                this.updateCurrentProductDisplay();
+                this.initializeMainDragDrop();
+            }
+
+            updateCurrentProductDisplay() {
+                const product = this.currentAnalysis.products[this.currentProcessingIndex];
+                if (!product) return;
+
+                document.getElementById('currentProcessingProductName').textContent = product.name;
+                document.getElementById('currentProcessingProductPrice').textContent = '$' + product.price.toLocaleString();
+                document.getElementById('currentProcessingIndex').textContent = this.currentProcessingIndex + 1;
+                document.getElementById('totalProcessingProducts').textContent = this.currentAnalysis.products.length;
+
+                const prevBtn = document.getElementById('prevProductBtn');
+                const nextBtn = document.getElementById('nextProductBtn');
+                
+                if (prevBtn) prevBtn.disabled = this.currentProcessingIndex === 0;
+                if (nextBtn) nextBtn.disabled = this.currentProcessingIndex >= this.currentAnalysis.products.length - 1;
+
+                this.clearCurrentImage();
+            }
+
+            clearCurrentImage() {
+                document.getElementById('originalImagePreview').innerHTML = '<div class="image-placeholder"><i class="fas fa-image"></i><p>La imagen aparecerá aquí</p></div>';
+                document.getElementById('processedImageResult').innerHTML = '<div class="result-placeholder"><i class="fas fa-wand-magic-sparkles"></i><p>El resultado aparecerá aquí</p></div>';
+                document.getElementById('btnProcessImage').disabled = true;
+                document.getElementById('btnDownloadResult').disabled = true;
+                document.getElementById('imageProcessingStatus').innerHTML = '<i class="fas fa-clock"></i> Esperando imagen';
+                this.currentImageFile = null;
+            }
+
+            initializeMainDragDrop() {
+                const dragDropArea = document.getElementById('mainDragDropArea');
+                const fileInput = document.getElementById('mainImageInput');
+
+                if (!dragDropArea || !fileInput) {
+                    log('❌ Elementos drag & drop no encontrados', 'error');
+                    return;
+                }
+
+                dragDropArea.addEventListener('click', () => fileInput.click());
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, () => {
+                        dragDropArea.classList.add('drag-over');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, () => {
+                        dragDropArea.classList.remove('drag-over');
+                    });
+                });
+
+                dragDropArea.addEventListener('drop', (e) => {
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.handleImageUpload(files[0]);
+                    }
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleImageUpload(e.target.files[0]);
+                    }
+                });
+
+                log('✅ Drag & drop inicializado correctamente', 'success');
+            }
+
+            handleImageUpload(file) {
+                log('📸 Manejando subida de imagen: ' + file.name, 'info');
+
+                if (!file.type.startsWith('image/')) {
+                    log('❌ Solo se permiten archivos de imagen', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('originalImagePreview').innerHTML = '<img src="' + e.target.result + '" alt="Imagen original" style="max-width: 100%; max-height: 200px; border-radius: 8px;">';
+                    document.getElementById('btnProcessImage').disabled = false;
+                    document.getElementById('imageProcessingStatus').innerHTML = '<i class="fas fa-check-circle" style="color: #4CAF50;"></i> Imagen cargada';
+                    this.currentImageFile = file;
+                    log('✅ Imagen cargada correctamente: ' + file.name, 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            processCurrentImage() {
+                if (!this.currentImageFile) {
+                    log('❌ No hay imagen para procesar', 'error');
+                    return;
+                }
+
+                const product = this.currentAnalysis.products[this.currentProcessingIndex];
+                if (!product) {
+                    log('❌ No hay producto para procesar', 'error');
+                    return;
+                }
+
+                log('🎨 Procesando imagen para: ' + product.name, 'info');
+
+                const processBtn = document.getElementById('btnProcessImage');
+                const statusIndicator = document.getElementById('imageProcessingStatus');
+                const overlay = document.getElementById('imageProcessingOverlay');
+
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                }
+
+                if (processBtn) {
+                    processBtn.disabled = true;
+                    processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Procesando...';
+                }
+
+                if (statusIndicator) {
+                    statusIndicator.className = 'processing-status processing';
+                    statusIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i>Procesando imagen...';
+                }
+
+                // Simular procesamiento
+                setTimeout(() => {
+                    document.getElementById('processingText').innerHTML = '<h4 style="color: white; margin: 0;">Mejorando con IA...</h4><p style="color: #999; margin: 10px 0 0 0;">Aplicando inteligencia artificial avanzada</p>';
+                }, 1500);
+
+                // Simular respuesta del servidor
+                setTimeout(() => {
+                    if (overlay) {
+                        overlay.style.display = 'none';
+                    }
+
+                    document.getElementById('processedImageResult').innerHTML = '<div style="background: #4CAF50; color: white; padding: 40px; border-radius: 8px; text-align: center;"><i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 10px;"></i><p>¡Imagen procesada exitosamente!</p><small>En la app real aquí aparecería la imagen procesada</small></div>';
+
+                    if (statusIndicator) {
+                        statusIndicator.className = 'processing-status completed';
+                        statusIndicator.innerHTML = '<i class="fas fa-check-circle"></i>Completado';
+                    }
+
+                    if (processBtn) {
+                        processBtn.innerHTML = '<i class="fas fa-magic"></i>Procesar Imagen';
+                        processBtn.disabled = false;
+                    }
+
+                    document.getElementById('btnDownloadResult').disabled = false;
+                    
+                    log('✅ Imagen procesada correctamente para: ' + product.name, 'success');
+                }, 4000);
+            }
+
+            previousProduct() {
+                if (this.currentProcessingIndex > 0) {
+                    this.currentProcessingIndex--;
+                    this.updateCurrentProductDisplay();
+                    log('⬅️ Producto anterior: ' + (this.currentProcessingIndex + 1), 'info');
+                }
+            }
+
+            nextProduct() {
+                if (this.currentProcessingIndex < this.currentAnalysis.products.length - 1) {
+                    this.currentProcessingIndex++;
+                    this.updateCurrentProductDisplay();
+                    log('➡️ Siguiente producto: ' + (this.currentProcessingIndex + 1), 'info');
+                }
+            }
+
+            showNotification(message, type) {
+                log('📢 ' + message, type);
+            }
+        }
+
+        // Variables globales
+        let debugCreator;
+
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logContainer').innerHTML = '<div class="log-entry log-info">[INICIO] Log limpiado</div>';
+        }
+
+        function initializePhase2() {
+            log('🚀 Inicializando Fase 2...', 'info');
+            try {
+                debugCreator = new DebugOffersCreator();
+                window.offersCreator = debugCreator; // Para compatibilidad
+                log('✅ Fase 2 inicializada correctamente', 'success');
+            } catch (error) {
+                log('❌ Error inicializando Fase 2: ' + error.message, 'error');
+            }
+        }
+
+        function testImageUpload() {
+            log('📸 Probando subida de imagen...', 'info');
+            document.getElementById('mainImageInput').click();
+        }
+
+        function testProcessImage() {
+            log('🎨 Probando procesamiento de imagen...', 'info');
+            if (debugCreator && debugCreator.processCurrentImage) {
+                debugCreator.processCurrentImage();
+            } else {
+                log('❌ Función processCurrentImage no disponible', 'error');
+            }
+        }
+
+        function checkFunctions() {
+            log('📊 Verificando funciones disponibles...', 'info');
+            
+            const checks = [
+                {name: 'debugCreator', status: !!debugCreator},
+                {name: 'processCurrentImage', status: debugCreator && typeof debugCreator.processCurrentImage === 'function'},
+                {name: 'handleImageUpload', status: debugCreator && typeof debugCreator.handleImageUpload === 'function'},
+                {name: 'updateCurrentProductDisplay', status: debugCreator && typeof debugCreator.updateCurrentProductDisplay === 'function'},
+                {name: 'initializeMainDragDrop', status: debugCreator && typeof debugCreator.initializeMainDragDrop === 'function'},
+                {name: 'window.processCurrentImage', status: typeof window.processCurrentImage === 'function'},
+                {name: 'btnProcessImage element', status: !!document.getElementById('btnProcessImage')},
+                {name: 'mainDragDropArea element', status: !!document.getElementById('mainDragDropArea')}
+            ];
+
+            checks.forEach(check => {
+                const status = check.status ? '✅' : '❌';
+                log(`${check.name}: ${status}`, check.status ? 'success' : 'error');
+            });
+        }
+
+        function goBack() {
+            log('🔙 Regresando...', 'info');
+        }
+
+        // Funciones globales para compatibilidad
+        window.processCurrentImage = () => {
+            if (debugCreator && debugCreator.processCurrentImage) {
+                debugCreator.processCurrentImage();
+            } else {
+                log('❌ processCurrentImage no disponible', 'error');
+            }
+        };
+
+        window.previousProduct = () => {
+            if (debugCreator && debugCreator.previousProduct) {
+                debugCreator.previousProduct();
+            }
+        };
+
+        window.nextProduct = () => {
+            if (debugCreator && debugCreator.nextProduct) {
+                debugCreator.nextProduct();
+            }
+        };
+
+        // Auto-test al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🎯 DOM loaded, running auto-tests...', 'info');
+            setTimeout(() => {
+                initializePhase2();
+                checkFunctions();
+            }, 500);
+        });
+
+        console.log('🐛 Debug Offers Creator cargado');
+    </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Directo - Fix Galería</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white; 
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+        .gallery-section {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .processed-gallery {
+            min-height: 200px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .no-images {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+        }
+        button {
+            padding: 15px 30px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .debug { 
+            background: #222; 
+            padding: 15px; 
+            margin: 20px 0; 
+            font-family: monospace; 
+            font-size: 12px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Directo - Fix Galería</h1>
+        
+        <button onclick="testDirectAdd()">➕ Test Directo - Agregar Imagen</button>
+        <button onclick="testForceUpdate()">🔄 Forzar Actualización</button>
+        <button onclick="inspectOffersCreator()">🔍 Inspeccionar OffersCreator</button>
+        
+        <!-- GALERÍA EXACTA COMO EN EL SISTEMA -->
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3><i class="fas fa-images"></i> Imágenes Procesadas (<span id="processedImageCounter">0</span>)</h3>
+            </div>
+            
+            <div class="processed-gallery" id="processedGalleryContainer">
+                <div class="no-images">
+                    <i class="fas fa-images"></i>
+                    <p>Las imágenes procesadas aparecerán aquí</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug">
+            <h4>🐛 Debug Log:</h4>
+            <div id="debugLog"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/offers-creator.js"></script>
+    
+    <script>
+        function testDirectAdd() {
+            log('🧪 TEST DIRECTO - Agregando imagen...');
+            
+            if (typeof offersCreator === 'undefined') {
+                log('❌ offersCreator no está definido');
+                return;
+            }
+            
+            // Crear imagen de prueba
+            const testImage = {
+                url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjRkZENzAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPklNRyBURVNUPC90ZXh0Pjwvc3ZnPg==',
+                name: 'Producto Test Directo',
+                price: 2500,
+                template: 'plantilla_1.png',
+                timestamp: new Date().toISOString(),
+                productIndex: 0
+            };
+            
+            log('📸 Datos de imagen creados:', JSON.stringify(testImage, null, 2));
+            
+            // Verificar que la función existe
+            if (typeof offersCreator.addToProcessedGallery === 'function') {
+                log('✅ Función addToProcessedGallery existe');
+                
+                // Llamar directamente
+                try {
+                    offersCreator.addToProcessedGallery(testImage);
+                    log('✅ Función llamada exitosamente');
+                } catch (error) {
+                    log('❌ Error al llamar función: ' + error.message);
+                }
+            } else {
+                log('❌ Función addToProcessedGallery NO existe');
+            }
+        }
+        
+        function testForceUpdate() {
+            log('🔄 FORZANDO ACTUALIZACIÓN...');
+            
+            if (typeof offersCreator === 'undefined') {
+                log('❌ offersCreator no está definido');
+                return;
+            }
+            
+            // Verificar estado actual
+            log('📊 Estado actual:');
+            log('  - processedImages.length: ' + (offersCreator.processedImages ? offersCreator.processedImages.length : 'undefined'));
+            
+            // Forzar actualización
+            if (typeof offersCreator.updateProcessedGallery === 'function') {
+                log('🔄 Llamando updateProcessedGallery...');
+                try {
+                    offersCreator.updateProcessedGallery();
+                    log('✅ updateProcessedGallery llamada exitosamente');
+                } catch (error) {
+                    log('❌ Error en updateProcessedGallery: ' + error.message);
+                }
+            } else {
+                log('❌ updateProcessedGallery NO existe');
+            }
+        }
+        
+        function inspectOffersCreator() {
+            log('🔍 INSPECCIONANDO OFFERSCREATOR...');
+            
+            if (typeof offersCreator === 'undefined') {
+                log('❌ offersCreator no está definido');
+                return;
+            }
+            
+            log('✅ offersCreator existe');
+            log('📊 Propiedades:');
+            log('  - processedImages: ' + (offersCreator.processedImages ? 'Array[' + offersCreator.processedImages.length + ']' : 'undefined'));
+            log('  - currentSession: ' + (offersCreator.currentSession ? 'Existe' : 'null'));
+            log('  - currentAnalysis: ' + (offersCreator.currentAnalysis ? 'Existe' : 'undefined'));
+            
+            log('🔧 Funciones:');
+            log('  - addToProcessedGallery: ' + (typeof offersCreator.addToProcessedGallery === 'function' ? 'Existe' : 'NO existe'));
+            log('  - updateProcessedGallery: ' + (typeof offersCreator.updateProcessedGallery === 'function' ? 'Existe' : 'NO existe'));
+            
+            // Verificar elementos DOM
+            log('🌐 Elementos DOM:');
+            const gallery = document.getElementById('processedGalleryContainer');
+            const counter = document.getElementById('processedImageCounter');
+            log('  - processedGalleryContainer: ' + (gallery ? 'Existe' : 'NO existe'));
+            log('  - processedImageCounter: ' + (counter ? 'Existe' : 'NO existe'));
+            
+            if (gallery) {
+                log('  - Contenido actual: ' + gallery.innerHTML.substring(0, 100) + '...');
+            }
+        }
+        
+        function log(message) {
+            console.log(message);
+            const debugLog = document.getElementById('debugLog');
+            if (debugLog) {
+                const timestamp = new Date().toLocaleTimeString();
+                debugLog.innerHTML += '<div style="margin: 2px 0; padding: 2px 0; border-bottom: 1px solid #333;">' + 
+                                     timestamp + ' - ' + message + '</div>';
+                debugLog.scrollTop = debugLog.scrollHeight;
+            }
+        }
+        
+        // Interceptar logs
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (args.length > 0 && typeof args[0] === 'string' && !args[0].includes('Debug Log')) {
+                log(args.join(' '));
+            }
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🎯 DOM cargado');
+            
+            setTimeout(() => {
+                inspectOffersCreator();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

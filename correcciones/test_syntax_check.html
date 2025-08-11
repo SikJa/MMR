@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Syntax Check</title>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .result {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .success { color: #44ff44; }
+        .error { color: #ff4444; }
+        .info { color: #4444ff; }
+        
+        button {
+            background: #FFD700;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Syntax Check</h1>
+    
+    <div class="result">
+        <h2>1. JavaScript Syntax Test</h2>
+        <button onclick="testSyntax()">Test Syntax</button>
+        <div id="syntax-result"></div>
+    </div>
+    
+    <div class="result">
+        <h2>2. Load Dashboard Script</h2>
+        <button onclick="loadDashboardScript()">Load Script</button>
+        <div id="script-result"></div>
+    </div>
+    
+    <div class="result">
+        <h2>3. Test Functions</h2>
+        <button onclick="testFunctions()">Test Functions</button>
+        <div id="functions-result"></div>
+    </div>
+
+    <script>
+        function testSyntax() {
+            console.log('Testing basic syntax...');
+            const result = document.getElementById('syntax-result');
+            
+            try {
+                // Test basic JavaScript
+                const test = {
+                    name: 'test',
+                    value: 123
+                };
+                
+                const arrow = () => 'arrow function works';
+                
+                class TestClass {
+                    constructor() {
+                        this.prop = 'class works';
+                    }
+                    
+                    method() {
+                        return 'method works';
+                    }
+                }
+                
+                const instance = new TestClass();
+                
+                result.innerHTML = `
+                    <div class="success">✅ Basic syntax: OK</div>
+                    <div class="success">✅ Arrow functions: ${arrow()}</div>
+                    <div class="success">✅ Classes: ${instance.prop}</div>
+                    <div class="success">✅ Methods: ${instance.method()}</div>
+                `;
+                
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Syntax error: ${error.message}</div>`;
+                console.error('Syntax test failed:', error);
+            }
+        }
+        
+        function loadDashboardScript() {
+            console.log('Loading dashboard script...');
+            const result = document.getElementById('script-result');
+            
+            try {
+                // Create script element
+                const script = document.createElement('script');
+                script.src = '/static/js/dashboard.js';
+                
+                script.onload = function() {
+                    result.innerHTML = '<div class="success">✅ Dashboard script loaded successfully</div>';
+                    console.log('Dashboard script loaded');
+                    
+                    // Test if DashboardController exists
+                    setTimeout(() => {
+                        if (typeof DashboardController !== 'undefined') {
+                            result.innerHTML += '<div class="success">✅ DashboardController class available</div>';
+                        } else {
+                            result.innerHTML += '<div class="error">❌ DashboardController class not found</div>';
+                        }
+                        
+                        if (window.appController) {
+                            result.innerHTML += '<div class="success">✅ window.appController initialized</div>';
+                        } else {
+                            result.innerHTML += '<div class="error">❌ window.appController not initialized</div>';
+                        }
+                    }, 1000);
+                };
+                
+                script.onerror = function() {
+                    result.innerHTML = '<div class="error">❌ Failed to load dashboard script</div>';
+                    console.error('Failed to load dashboard script');
+                };
+                
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                console.error('Load script test failed:', error);
+            }
+        }
+        
+        function testFunctions() {
+            console.log('Testing functions...');
+            const result = document.getElementById('functions-result');
+            
+            const functions = [
+                'startProcessing',
+                'processCurrentProduct',
+                'nextProduct',
+                'copyCurrentProduct',
+                'downloadCurrent'
+            ];
+            
+            let html = '<h4>Global Functions:</h4>';
+            
+            functions.forEach(funcName => {
+                const exists = typeof window[funcName] === 'function';
+                const status = exists ? '✅' : '❌';
+                const found = exists ? 'Found' : 'Not found';
+                
+                html += `<div class="${exists ? 'success' : 'error'}">${status} ${funcName}: ${found}</div>`;
+            });
+            
+            result.innerHTML = html;
+        }
+        
+        // Auto-test
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Test page loaded');
+            setTimeout(() => {
+                testSyntax();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

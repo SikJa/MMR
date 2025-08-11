@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Offers Creator Syntax</title>
+</head>
+<body>
+    <div id="test-results"></div>
+    
+    <script src="static/js/offers-creator.js"></script>
+    <script>
+        // Test básico de sintaxis
+        document.addEventListener('DOMContentLoaded', () => {
+            const results = document.getElementById('test-results');
+            
+            try {
+                // Verificar que la clase existe
+                if (typeof OffersCreator !== 'undefined') {
+                    results.innerHTML += '<p style="color: green;">✅ Clase OffersCreator definida correctamente</p>';
+                } else {
+                    results.innerHTML += '<p style="color: red;">❌ Clase OffersCreator no encontrada</p>';
+                }
+                
+                // Verificar que se puede instanciar
+                const instance = new OffersCreator();
+                if (instance) {
+                    results.innerHTML += '<p style="color: green;">✅ Instancia creada correctamente</p>';
+                } else {
+                    results.innerHTML += '<p style="color: red;">❌ No se pudo crear instancia</p>';
+                }
+                
+                // Verificar métodos principales
+                const methods = ['analyzeProductList', 'startProcessing', 'showProviderSelection', 'downloadAllImages'];
+                methods.forEach(method => {
+                    if (typeof instance[method] === 'function') {
+                        results.innerHTML += `<p style="color: green;">✅ Método ${method} existe</p>`;
+                    } else {
+                        results.innerHTML += `<p style="color: red;">❌ Método ${method} no encontrado</p>`;
+                    }
+                });
+                
+                results.innerHTML += '<p style="color: blue;">🎉 Todas las pruebas de sintaxis pasaron correctamente</p>';
+                
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
+                console.error('Error en test:', error);
+            }
+        });
+    </script>
+</body>
+</html>

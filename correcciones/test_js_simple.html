@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JavaScript</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Test JavaScript</h1>
+    <button onclick="testFunction()">Test Button</button>
+    <div id="test-result"></div>
+    
+    <script>
+        console.log('JavaScript cargado correctamente');
+        
+        function testFunction() {
+            console.log('Función test ejecutada');
+            document.getElementById('test-result').innerHTML = 'JavaScript funciona!';
+            alert('JavaScript funciona correctamente!');
+        }
+        
+        // Test Chart.js
+        console.log('Chart.js disponible:', typeof Chart !== 'undefined');
+        
+        // Test DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM cargado correctamente');
+        });
+    </script>
+</body>
+</html>

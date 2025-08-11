@@ -1,0 +1,106 @@
+<!-- TEMPLATE: MODAL AVANZADO DE EDICIÓN -->
+<div class="advanced-edit-modal" id="advancedEditModal">
+    <div class="modal-backdrop" onclick="offersCreator.closeAdvancedEditModal()"></div>
+    
+    <div class="modal-container">
+        <!-- HEADER -->
+        <div class="modal-header">
+            <div class="modal-title-section">
+                <h2 id="editModalTitle">📋 Sesión: Cargando...</h2>
+                <p id="editModalSubtitle">Proveedor: Cargando...</p>
+            </div>
+            <button class="modal-close-btn" onclick="offersCreator.closeAdvancedEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="modal-content">
+            <!-- AJUSTES MASIVOS -->
+            <div class="section-card">
+                <h3>
+                    <i class="fas fa-sliders-h"></i>
+                    AJUSTES MASIVOS:
+                </h3>
+                <div class="mass-adjustments">
+                    <button class="btn-glass btn-adjustment btn-success" onclick="offersCreator.applyMassAdjustment(10)">
+                        +10%
+                    </button>
+                    <button class="btn-glass btn-adjustment btn-success" onclick="offersCreator.applyMassAdjustment(5)">
+                        +5%
+                    </button>
+                    <button class="btn-glass btn-adjustment btn-danger" onclick="offersCreator.applyMassAdjustment(-5)">
+                        -5%
+                    </button>
+                    <button class="btn-glass btn-adjustment btn-danger" onclick="offersCreator.applyMassAdjustment(-10)">
+                        -10%
+                    </button>
+                    <div class="custom-adjustment">
+                        <input type="number" id="customPercentage" placeholder="%" class="custom-input" min="-100" max="1000">
+                        <button class="btn-glass btn-custom btn-warning" onclick="offersCreator.applyCustomAdjustment()">
+                            <i class="fas fa-check"></i>
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCTOS INDIVIDUALES -->
+            <div class="section-card">
+                <h3>
+                    <i class="fas fa-boxes"></i>
+                    PRODUCTOS INDIVIDUALES:
+                </h3>
+                <div class="products-list" id="editProductsList">
+                    <!-- Los productos se cargan dinámicamente -->
+                </div>
+            </div>
+
+            <!-- IMÁGENES PROCESADAS -->
+            <div class="section-card">
+                <h3>
+                    <i class="fas fa-images"></i>
+                    IMÁGENES PROCESADAS:
+                </h3>
+                <div class="images-grid" id="editImagesGrid">
+                    <!-- Las imágenes se cargan dinámicamente -->
+                </div>
+                <div class="images-actions">
+                    <button class="btn-glass btn-primary btn-lg" onclick="offersCreator.sendAllToWhatsApp()">
+                        <i class="fab fa-whatsapp"></i>
+                        📤 ENVIAR TODO A WHATSAPP
+                    </button>
+                    <button class="btn-glass btn-success btn-lg" onclick="offersCreator.saveAllChanges()">
+                        <i class="fas fa-save"></i>
+                        💾 GUARDAR CAMBIOS
+                    </button>
+                </div>
+            </div>
+
+            <!-- NOTAS -->
+            <div class="section-card">
+                <h3>
+                    <i class="fas fa-sticky-note"></i>
+                    NOTAS:
+                </h3>
+                <textarea id="sessionNotes" class="notes-textarea" placeholder="Agregar notas sobre esta sesión..." rows="4"></textarea>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="modal-footer">
+            <button class="btn-glass btn-secondary" onclick="offersCreator.reprocessAll()">
+                <i class="fas fa-sync"></i>
+                🔄 Reprocesar Todo
+            </button>
+            <button class="btn-glass btn-whatsapp" onclick="offersCreator.shareToWhatsApp()">
+                <i class="fab fa-whatsapp"></i>
+                📱 WhatsApp
+            </button>
+            <button class="btn-glass btn-danger" onclick="offersCreator.closeAdvancedEditModal()">
+                <i class="fas fa-times"></i>
+                ❌ Cerrar
+            </button>
+        </div>
+    </div>
+</div>

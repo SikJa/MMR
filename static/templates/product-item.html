@@ -1,0 +1,26 @@
+<!-- TEMPLATE: PRODUCTO INDIVIDUAL PARA EDICIÓN -->
+<div class="product-edit-item" data-product-index="{{index}}">
+    <div class="product-info">
+        <span class="product-name" title="{{fullName}}">{{name}}</span>
+        <div class="product-price-section">
+            <span class="price-display">${{formattedPrice}}</span>
+            <button class="btn-glass btn-edit-price btn-sm" onclick="offersCreator.editIndividualPrice({{index}})" title="Editar precio de este producto">
+                <i class="fas fa-edit"></i>
+                Editar
+            </button>
+        </div>
+    </div>
+    
+    {{#if description}}
+    <div class="product-description">
+        {{description}}
+    </div>
+    {{/if}}
+    
+    {{#if provider}}
+    <div class="product-provider">
+        <i class="fas fa-building"></i>
+        {{provider}}
+    </div>
+    {{/if}}
+</div>

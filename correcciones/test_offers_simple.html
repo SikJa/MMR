@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Offers Creator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .container { max-width: 800px; margin: 0 auto; }
+        textarea { width: 100%; height: 200px; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:disabled { background: #666; cursor: not-allowed; }
+        .analysis { background: #333; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Test Creador de Ofertas</h1>
+        
+        <div>
+            <h3>Pega tu lista de productos:</h3>
+            <textarea id="productListInput" placeholder="Pega aquí tu lista de productos..."></textarea>
+            
+            <div id="listAnalysisInfo" class="analysis hidden">
+                <h4>📊 Análisis de Lista</h4>
+                <p>Productos detectados: <span id="detectedProducts">0</span></p>
+                <p>Total estimado: <span id="estimatedTotal">$0</span></p>
+                <p>Proveedores: <span id="detectedProviders">0</span></p>
+            </div>
+            
+            <button id="btnProcessList" disabled>🚀 Procesar Lista</button>
+        </div>
+        
+        <div id="debug" style="background: #222; padding: 10px; margin-top: 20px; font-family: monospace; font-size: 12px;">
+            <h4>🐛 Debug Log:</h4>
+            <div id="debugLog"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🎯 Iniciando test simple...');
+        
+        class SimpleOffersTest {
+            constructor() {
+                this.currentAnalysis = {
+                    products: [],
+                    totalEstimated: 0,
+                    providers: [],
+                    isValid: false
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.log('🚀 Inicializando test...');
+                this.initEventListeners();
+            }
+            
+            initEventListeners() {
+                this.log('🎧 Configurando event listeners...');
+                
+                const productListInput = document.getElementById('productListInput');
+                if (productListInput) {
+                    this.log('✅ Input encontrado');
+                    productListInput.addEventListener('input', (e) => {
+                        this.log('📝 Input detectado: ' + e.target.value.length + ' caracteres');
+                        this.analyzeProductList(e.target.value);
+                    });
+                } else {
+                    this.log('❌ Input NO encontrado');
+                }
+
+                const btnProcessList = document.getElementById('btnProcessList');
+                if (btnProcessList) {
+                    this.log('✅ Botón encontrado');
+                    btnProcessList.addEventListener('click', () => {
+                        this.log('🚀 Botón clickeado');
+                        this.startProcessing();
+                    });
+                } else {
+                    this.log('❌ Botón NO encontrado');
+                }
+            }
+            
+            analyzeProductList(text) {
+                this.log('🔍 Analizando: "' + text.substring(0, 50) + '..."');
+                
+                if (!text || text.trim().length === 0) {
+                    this.log('⚠️ Texto vacío');
+                    this.hideAnalysisInfo();
+                    this.disableProcessButton();
+                    return;
+                }
+
+                const lines = text.split('\n').filter(line => line.trim());
+                this.log('📄 Líneas encontradas: ' + lines.length);
+                
+                const products = [];
+                const providers = new Set();
+                let totalEstimated = 0;
+
+                lines.forEach((line, index) => {
+                    const trimmedLine = line.trim();
+                    this.log('📝 Procesando línea ' + index + ': "' + trimmedLine + '"');
+                    
+                    if (trimmedLine.startsWith('-') && trimmedLine.indexOf(' - ') !== -1) {
+                        this.log('✅ Línea válida detectada');
+                        const parts = trimmedLine.split(' - ');
+                        this.log('🔧 Partes: ' + parts.length + ' -> ' + JSON.stringify(parts));
+                        
+                        if (parts.length >= 2) {
+                            const name = parts[0].replace(/^-\s*/, '').trim();
+                            const priceMatch = parts[1].match(/\$[\d,]+/);
+                            this.log('💰 Nombre: "' + name + '", Precio match: ' + (priceMatch ? priceMatch[0] : 'null'));
+
+                            if (name && priceMatch) {
+                                const priceStr = priceMatch[0].replace(/[$,]/g, '');
+                                const price = parseFloat(priceStr);
+                                this.log('💵 Precio procesado: ' + price);
+
+                                if (!isNaN(price)) {
+                                    products.push({
+                                        id: index,
+                                        name: name,
+                                        price: price,
+                                        description: parts[2] || '',
+                                        provider: this.detectProvider(name)
+                                    });
+
+                                    totalEstimated += price;
+                                    providers.add(this.detectProvider(name));
+                                    this.log('✅ Producto agregado: ' + name + ' - $' + price);
+                                }
+                            }
+                        }
+                    } else {
+                        this.log('❌ Línea no válida: "' + trimmedLine + '"');
+                    }
+                });
+
+                this.currentAnalysis = {
+                    products: products,
+                    totalEstimated: totalEstimated,
+                    providers: Array.from(providers),
+                    isValid: products.length > 0
+                };
+
+                this.log('📊 Análisis completado: ' + products.length + ' productos, $' + totalEstimated);
+                this.showAnalysisInfo();
+
+                if (this.currentAnalysis.isValid) {
+                    this.enableProcessButton();
+                } else {
+                    this.disableProcessButton();
+                }
+            }
+            
+            detectProvider(productName) {
+                const knownProviders = ['Gulf', 'Honda', 'Toyota', 'Nissan', 'Ford'];
+                const upperName = productName.toUpperCase();
+                for (const provider of knownProviders) {
+                    if (upperName.includes(provider.toUpperCase())) {
+                        return provider;
+                    }
+                }
+                return productName.split(' ')[0] || 'Genérico';
+            }
+            
+            showAnalysisInfo() {
+                this.log('📊 Mostrando información de análisis...');
+                const analysisInfo = document.getElementById('listAnalysisInfo');
+                const detectedProducts = document.getElementById('detectedProducts');
+                const estimatedTotal = document.getElementById('estimatedTotal');
+                const detectedProviders = document.getElementById('detectedProviders');
+
+                if (analysisInfo) {
+                    analysisInfo.classList.remove('hidden');
+                }
+
+                if (detectedProducts) {
+                    detectedProducts.textContent = this.currentAnalysis.products.length;
+                }
+
+                if (estimatedTotal) {
+                    estimatedTotal.textContent = '$' + this.currentAnalysis.totalEstimated.toLocaleString();
+                }
+
+                if (detectedProviders) {
+                    detectedProviders.textContent = this.currentAnalysis.providers.length;
+                }
+            }
+
+            hideAnalysisInfo() {
+                const analysisInfo = document.getElementById('listAnalysisInfo');
+                if (analysisInfo) {
+                    analysisInfo.classList.add('hidden');
+                }
+            }
+
+            enableProcessButton() {
+                this.log('✅ Habilitando botón de procesar');
+                const btnProcessList = document.getElementById('btnProcessList');
+                if (btnProcessList) {
+                    btnProcessList.disabled = false;
+                    btnProcessList.style.background = '#4CAF50';
+                }
+            }
+
+            disableProcessButton() {
+                this.log('❌ Deshabilitando botón de procesar');
+                const btnProcessList = document.getElementById('btnProcessList');
+                if (btnProcessList) {
+                    btnProcessList.disabled = true;
+                    btnProcessList.style.background = '#666';
+                }
+            }
+            
+            startProcessing() {
+                this.log('🚀 INICIANDO PROCESAMIENTO!');
+                this.log('📦 Productos a procesar: ' + JSON.stringify(this.currentAnalysis.products, null, 2));
+                alert('¡Procesamiento iniciado! Ver consola para detalles.');
+            }
+            
+            log(message) {
+                console.log(message);
+                const debugLog = document.getElementById('debugLog');
+                if (debugLog) {
+                    debugLog.innerHTML += '<div>' + new Date().toLocaleTimeString() + ' - ' + message + '</div>';
+                    debugLog.scrollTop = debugLog.scrollHeight;
+                }
+            }
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 DOM cargado, inicializando test...');
+            new SimpleOffersTest();
+        });
+    </script>
+</body>
+</html>

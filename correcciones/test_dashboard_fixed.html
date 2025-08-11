@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Fixed - Fase 2</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/offers-creator.css">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .test-controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 9999;
+            border: 2px solid #FFD700;
+        }
+        .test-btn {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px;
+            font-size: 12px;
+        }
+        .status {
+            background: #222;
+            color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Controles de Test -->
+    <div class="test-controls">
+        <h4 style="margin: 0 0 10px 0; color: #FFD700;">🧪 Test Fase 2</h4>
+        <button class="test-btn" onclick="testFullFlow()">🚀 Test Completo</button>
+        <button class="test-btn" onclick="testPhase2Only()">🎯 Solo Fase 2</button>
+        <button class="test-btn" onclick="checkStatus()">📊 Estado</button>
+        <div id="test-status" class="status">Listo para probar</div>
+    </div>
+
+    <!-- Elementos necesarios para el test -->
+    <div style="display: none;">
+        <textarea id="productListInput">- Aceite Gulf 20W-50 - $2,450 - Aceite motor
+- Filtro Honda Civic - $850 - Filtro aire
+- Bujías NGK - $1,200 - Bujías</textarea>
+        <button id="btnProcessList">Procesar Lista</button>
+        <div id="listAnalysisInfo">
+            <span id="detectedProducts">0</span>
+            <span id="estimatedTotal">$0</span>
+            <span id="detectedProviders">0</span>
+        </div>
+    </div>
+
+    <!-- Pantalla de Procesamiento -->
+    <div class="processing-screen" id="processingScreen" style="display: none;">
+        <div class="processing-content" style="background: #333; padding: 40px; border-radius: 12px; text-align: center;">
+            <h3>🔄 Procesando Lista...</h3>
+            <div style="width: 300px; height: 8px; background: #555; border-radius: 4px; overflow: hidden; margin: 20px auto;">
+                <div id="progressFill" style="height: 100%; background: #FFD700; width: 0%; transition: width 0.3s ease;"></div>
+            </div>
+            <div id="progressText">0%</div>
+            <div id="processingStatus">Iniciando...</div>
+            <div style="margin-top: 20px;">
+                <div>Productos: <span id="processingProducts">0</span></div>
+                <div>Total: <span id="processingTotal">$0</span></div>
+                <div>Proveedores: <span id="processingProviders">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Selección de Proveedor -->
+    <div class="provider-selection-screen" id="providerSelectionScreen" style="display: none;">
+        <div class="provider-selection-content">
+            <div class="provider-header">
+                <div class="provider-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h2>Seleccionar Proveedor</h2>
+                <p>Elige el proveedor para esta sesión de productos</p>
+            </div>
+
+            <div class="provider-stats">
+                <div class="stat-item">
+                    <i class="fas fa-box"></i>
+                    <span>Productos: <strong id="providerProducts">0</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Total: <strong id="providerTotal">$0</strong></span>
+                </div>
+            </div>
+
+            <div class="provider-dropdown-container">
+                <label class="provider-label">Proveedor *</label>
+                <div class="provider-dropdown" id="providerDropdown">
+                    <button class="provider-dropdown-trigger" id="providerTrigger">
+                        <span class="provider-selected-text placeholder">Seleccionar proveedor...</span>
+                        <i class="fas fa-chevron-down provider-chevron"></i>
+                    </button>
+                    <div class="provider-dropdown-content" id="providerDropdownContent">
+                        <div class="provider-option" data-value="inmoto">Inmoto</div>
+                        <div class="provider-option" data-value="herman-repuestos">Herman repuestos</div>
+                        <div class="provider-option" data-value="honda">Honda</div>
+                        <div class="provider-option" data-value="gulf">Gulf</div>
+                        <div class="provider-option" data-value="castrol">Castrol</div>
+                    </div>
+                </div>
+                <div class="provider-error" id="providerError" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Debes seleccionar un proveedor para continuar
+                </div>
+            </div>
+
+            <div class="provider-actions">
+                <button class="btn-continue-to-phase2" id="btnContinueToPhase2" onclick="continueToPhase2()" disabled>
+                    <i class="fas fa-arrow-right"></i>
+                    Continuar a Procesamiento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FASE 2: Pantalla de Procesamiento Individual -->
+    <div class="individual-processing-screen" id="individualProcessingScreen" style="display: none;">
+        <!-- Header Superior -->
+        <div class="processing-header" style="background: #333; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn-back-processing" onclick="backToMain()" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+            
+            <div class="current-product-info" style="text-align: center;">
+                <h2 id="currentProcessingProductName" style="margin: 0; color: #FFD700;">Aceite Gulf 20W-50</h2>
+                <span id="currentProcessingProductPrice" style="color: #4CAF50; font-size: 18px;">$2,450</span>
+            </div>
+            
+            <div class="product-counter" style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: white;"><span id="currentProcessingIndex">1</span> / <span id="totalProcessingProducts">3</span></span>
+                <button id="prevProductBtn" onclick="previousProduct()" style="background: #666; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="nextProductBtn" onclick="nextProduct()" style="background: #666; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Drag & Drop Principal -->
+        <div id="mainDragDropArea" style="background: #333; border: 2px dashed #666; border-radius: 12px; padding: 60px; text-align: center; margin: 20px; cursor: pointer;">
+            <div class="drag-drop-content">
+                <div class="drag-drop-icon">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #FFD700; margin-bottom: 20px;"></i>
+                </div>
+                <h3 style="color: white; margin: 10px 0;">Arrastra la imagen del producto aquí</h3>
+                <p style="color: #999;">o haz clic para seleccionar desde tu computadora</p>
+                <span style="color: #666; font-size: 12px;">Formatos: JPG, PNG, WEBP</span>
+            </div>
+            <input type="file" id="mainImageInput" accept="image/*" style="display: none;">
+        </div>
+
+        <!-- Dos Tarjetas Principales -->
+        <div style="display: flex; gap: 20px; padding: 20px;">
+            <!-- Tarjeta Izquierda: Imagen Original -->
+            <div style="flex: 1; background: #333; border-radius: 12px; padding: 20px;">
+                <div style="border-bottom: 1px solid #555; padding-bottom: 10px; margin-bottom: 20px;">
+                    <h4 style="margin: 0; color: #FFD700;"><i class="fas fa-image"></i> Imagen Original</h4>
+                </div>
+                <div id="originalImagePreview" style="min-height: 200px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <div class="image-placeholder" style="text-align: center; color: #666;">
+                        <i class="fas fa-image" style="font-size: 48px; margin-bottom: 10px;"></i>
+                        <p>La imagen aparecerá aquí</p>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button id="btnProcessImage" onclick="processCurrentImage()" disabled style="background: #FFD700; color: #000; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-magic"></i> Procesar Imagen
+                    </button>
+                </div>
+                <div id="imageProcessingStatus" style="margin-top: 10px; text-align: center; color: #666;">
+                    <i class="fas fa-clock"></i> Esperando imagen
+                </div>
+            </div>
+
+            <!-- Tarjeta Derecha: Resultado Procesado -->
+            <div style="flex: 1; background: #333; border-radius: 12px; padding: 20px;">
+                <div style="border-bottom: 1px solid #555; padding-bottom: 10px; margin-bottom: 20px;">
+                    <h4 style="margin: 0; color: #FFD700;"><i class="fas fa-wand-magic-sparkles"></i> Resultado Procesado</h4>
+                </div>
+                <div id="processedImageResult" style="min-height: 200px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <div class="result-placeholder" style="text-align: center; color: #666;">
+                        <i class="fas fa-wand-magic-sparkles" style="font-size: 48px; margin-bottom: 10px;"></i>
+                        <p>El resultado aparecerá aquí</p>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button id="btnDownloadResult" disabled style="background: #4CAF50; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-download"></i> Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates Section -->
+        <div style="background: #333; margin: 20px; padding: 20px; border-radius: 12px;">
+            <h4 style="color: #FFD700; margin-bottom: 15px;"><i class="fas fa-palette"></i> Seleccionar Template</h4>
+            <div id="templatesCarousel" style="display: flex; gap: 10px; overflow-x: auto; padding: 10px 0;">
+                <!-- Templates se cargarán aquí -->
+            </div>
+            <div style="margin-top: 10px; color: #999;">
+                Template seleccionado: <span id="selectedTemplateDisplay" style="color: #FFD700;">Template 1</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de procesamiento -->
+    <div id="imageProcessingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: #333; padding: 40px; border-radius: 12px; text-align: center;">
+            <div style="width: 60px; height: 60px; border: 4px solid #FFD700; border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <div id="processingText">
+                <h4 style="color: white; margin: 0;">Procesando imagen...</h4>
+                <p style="color: #999; margin: 10px 0 0 0;">Aplicando mejoras con IA</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .template-item {
+            min-width: 80px;
+            height: 80px;
+            background: #222;
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .template-item.selected {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        .template-item:hover {
+            border-color: #FFD700;
+        }
+    </style>
+
+    <script>
+        // Crear una versión simplificada de OffersCreator para test
+        class TestOffersCreator {
+            constructor() {
+                this.currentAnalysis = {
+                    products: [
+                        {name: 'Aceite Gulf 20W-50', price: 2450},
+                        {name: 'Filtro Honda Civic', price: 850},
+                        {name: 'Bujías NGK', price: 1200}
+                    ],
+                    totalEstimated: 4500,
+                    providers: ['Gulf', 'Honda', 'NGK'],
+                    isValid: true
+                };
+                this.currentProcessingIndex = 0;
+                this.selectedTemplate = 'plantilla_1.png';
+                this.currentImageFile = null;
+                this.processedImages = [];
+                this.init();
+            }
+
+            init() {
+                console.log('🧪 Test OffersCreator inicializado');
+                this.setupProviderDropdown();
+                this.initializeProcessingTemplates();
+                this.initializeMainDragDrop();
+            }
+
+            setupProviderDropdown() {
+                const trigger = document.getElementById('providerTrigger');
+                const options = document.querySelectorAll('.provider-option');
+                const continueBtn = document.getElementById('btnContinueToPhase2');
+                let selectedProvider = null;
+
+                if (trigger) {
+                    trigger.addEventListener('click', () => {
+                        const content = document.getElementById('providerDropdownContent');
+                        const isActive = trigger.classList.contains('active');
+                        if (isActive) {
+                            trigger.classList.remove('active');
+                            content.classList.remove('show');
+                        } else {
+                            trigger.classList.add('active');
+                            content.classList.add('show');
+                        }
+                    });
+                }
+
+                options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        selectedProvider = option.dataset.value;
+                        const selectedText = option.textContent;
+                        
+                        document.querySelector('.provider-selected-text').textContent = selectedText;
+                        document.querySelector('.provider-selected-text').classList.remove('placeholder');
+                        
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        
+                        if (continueBtn) continueBtn.disabled = false;
+                        
+                        trigger.classList.remove('active');
+                        document.getElementById('providerDropdownContent').classList.remove('show');
+                        
+                        updateStatus('✅ Proveedor seleccionado: ' + selectedText);
+                    });
+                });
+
+                window.continueToPhase2 = () => {
+                    if (!selectedProvider) {
+                        document.getElementById('providerError').style.display = 'flex';
+                        return;
+                    }
+                    updateStatus('🚀 Continuando a Fase 2...');
+                    this.openIndividualProcessing();
+                };
+            }
+
+            openIndividualProcessing() {
+                document.getElementById('providerSelectionScreen').style.display = 'none';
+                document.getElementById('individualProcessingScreen').style.display = 'block';
+                this.updateCurrentProductDisplay();
+                updateStatus('✅ Fase 2 abierta correctamente');
+            }
+
+            updateCurrentProductDisplay() {
+                const product = this.currentAnalysis.products[this.currentProcessingIndex];
+                if (!product) return;
+
+                document.getElementById('currentProcessingProductName').textContent = product.name;
+                document.getElementById('currentProcessingProductPrice').textContent = '$' + product.price.toLocaleString();
+                document.getElementById('currentProcessingIndex').textContent = this.currentProcessingIndex + 1;
+                document.getElementById('totalProcessingProducts').textContent = this.currentAnalysis.products.length;
+
+                const prevBtn = document.getElementById('prevProductBtn');
+                const nextBtn = document.getElementById('nextProductBtn');
+                
+                if (prevBtn) prevBtn.disabled = this.currentProcessingIndex === 0;
+                if (nextBtn) nextBtn.disabled = this.currentProcessingIndex >= this.currentAnalysis.products.length - 1;
+
+                this.clearCurrentImage();
+            }
+
+            clearCurrentImage() {
+                document.getElementById('originalImagePreview').innerHTML = '<div class="image-placeholder" style="text-align: center; color: #666;"><i class="fas fa-image" style="font-size: 48px; margin-bottom: 10px;"></i><p>La imagen aparecerá aquí</p></div>';
+                document.getElementById('processedImageResult').innerHTML = '<div class="result-placeholder" style="text-align: center; color: #666;"><i class="fas fa-wand-magic-sparkles" style="font-size: 48px; margin-bottom: 10px;"></i><p>El resultado aparecerá aquí</p></div>';
+                document.getElementById('btnProcessImage').disabled = true;
+                document.getElementById('btnDownloadResult').disabled = true;
+                document.getElementById('imageProcessingStatus').innerHTML = '<i class="fas fa-clock"></i> Esperando imagen';
+                this.currentImageFile = null;
+            }
+
+            initializeMainDragDrop() {
+                const dragDropArea = document.getElementById('mainDragDropArea');
+                const fileInput = document.getElementById('mainImageInput');
+
+                if (!dragDropArea || !fileInput) return;
+
+                dragDropArea.addEventListener('click', () => fileInput.click());
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dragDropArea.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                dragDropArea.addEventListener('drop', (e) => {
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.handleImageUpload(files[0]);
+                    }
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleImageUpload(e.target.files[0]);
+                    }
+                });
+            }
+
+            handleImageUpload(file) {
+                if (!file.type.startsWith('image/')) {
+                    updateStatus('❌ Solo se permiten archivos de imagen');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('originalImagePreview').innerHTML = '<img src="' + e.target.result + '" alt="Imagen original" style="max-width: 100%; max-height: 200px; border-radius: 8px;">';
+                    document.getElementById('btnProcessImage').disabled = false;
+                    document.getElementById('imageProcessingStatus').innerHTML = '<i class="fas fa-check-circle" style="color: #4CAF50;"></i> Imagen cargada';
+                    this.currentImageFile = file;
+                    updateStatus('✅ Imagen cargada: ' + file.name);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            initializeProcessingTemplates() {
+                const templates = ['plantilla_1.png', 'plantilla_2.png', 'plantilla_3.png', 'plantilla_4.png'];
+                const carousel = document.getElementById('templatesCarousel');
+                if (!carousel) return;
+
+                carousel.innerHTML = '';
+                templates.forEach((template, index) => {
+                    const templateItem = document.createElement('div');
+                    templateItem.className = 'template-item' + (index === 0 ? ' selected' : '');
+                    templateItem.innerHTML = `<span style="color: #FFD700;">T${index + 1}</span>`;
+                    templateItem.onclick = () => this.selectTemplate(template, index + 1);
+                    carousel.appendChild(templateItem);
+                });
+            }
+
+            selectTemplate(templateName, number) {
+                document.querySelectorAll('.template-item').forEach(item => item.classList.remove('selected'));
+                event.target.closest('.template-item').classList.add('selected');
+                document.getElementById('selectedTemplateDisplay').textContent = 'Template ' + number;
+                this.selectedTemplate = templateName;
+                updateStatus('🎨 Template ' + number + ' seleccionado');
+            }
+
+            processCurrentImage() {
+                if (!this.currentImageFile) {
+                    updateStatus('❌ Sube una imagen primero');
+                    return;
+                }
+
+                updateStatus('🎨 Procesando imagen...');
+                document.getElementById('imageProcessingOverlay').style.display = 'flex';
+                document.getElementById('btnProcessImage').disabled = true;
+
+                // Simular procesamiento
+                setTimeout(() => {
+                    document.getElementById('imageProcessingOverlay').style.display = 'none';
+                    document.getElementById('processedImageResult').innerHTML = '<div style="background: #4CAF50; color: white; padding: 40px; border-radius: 8px; text-align: center;"><i class="fas fa-check-circle" style="font-size: 48px; margin-bottom: 10px;"></i><p>¡Imagen procesada exitosamente!</p></div>';
+                    document.getElementById('btnProcessImage').disabled = false;
+                    document.getElementById('btnDownloadResult').disabled = false;
+                    document.getElementById('imageProcessingStatus').innerHTML = '<i class="fas fa-check-circle" style="color: #4CAF50;"></i> Completado';
+                    updateStatus('✅ Imagen procesada correctamente');
+                }, 3000);
+            }
+
+            previousProduct() {
+                if (this.currentProcessingIndex > 0) {
+                    this.currentProcessingIndex--;
+                    this.updateCurrentProductDisplay();
+                    updateStatus('⬅️ Producto anterior: ' + (this.currentProcessingIndex + 1));
+                }
+            }
+
+            nextProduct() {
+                if (this.currentProcessingIndex < this.currentAnalysis.products.length - 1) {
+                    this.currentProcessingIndex++;
+                    this.updateCurrentProductDisplay();
+                    updateStatus('➡️ Siguiente producto: ' + (this.currentProcessingIndex + 1));
+                }
+            }
+
+            backToMain() {
+                document.getElementById('individualProcessingScreen').style.display = 'none';
+                updateStatus('🔙 Regresando al menú principal');
+            }
+        }
+
+        // Variables globales
+        let testCreator;
+
+        function updateStatus(message) {
+            document.getElementById('test-status').textContent = message;
+            console.log('📊', message);
+        }
+
+        function testFullFlow() {
+            updateStatus('🚀 Iniciando test completo...');
+            if (testCreator) {
+                testCreator.currentAnalysis.isValid = true;
+                document.getElementById('providerSelectionScreen').style.display = 'flex';
+                updateStatus('✅ Pantalla de proveedores mostrada');
+            }
+        }
+
+        function testPhase2Only() {
+            updateStatus('🎯 Abriendo Fase 2 directamente...');
+            if (testCreator) {
+                testCreator.openIndividualProcessing();
+            }
+        }
+
+        function checkStatus() {
+            const checks = [
+                'TestOffersCreator: ' + (testCreator ? '✅' : '❌'),
+                'Provider Screen: ' + (document.getElementById('providerSelectionScreen') ? '✅' : '❌'),
+                'Individual Screen: ' + (document.getElementById('individualProcessingScreen') ? '✅' : '❌'),
+                'Drag Drop Area: ' + (document.getElementById('mainDragDropArea') ? '✅' : '❌')
+            ];
+            updateStatus('📊 ' + checks.join(' | '));
+        }
+
+        // Funciones globales
+        window.previousProduct = () => testCreator?.previousProduct();
+        window.nextProduct = () => testCreator?.nextProduct();
+        window.processCurrentImage = () => testCreator?.processCurrentImage();
+        window.backToMain = () => testCreator?.backToMain();
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            testCreator = new TestOffersCreator();
+            updateStatus('✅ Test Dashboard Fixed cargado');
+        });
+
+        console.log('🧪 Test Dashboard Fixed cargado');
+    </script>
+</body>
+</html>

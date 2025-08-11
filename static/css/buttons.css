@@ -1,0 +1,281 @@
+/* ===== SISTEMA DE BOTONES GLASS AMARILLOS ===== */
+
+/* ===== BOTÓN BASE GLASS ===== */
+.btn-glass {
+    background: var(--mmr-gold-light);
+    border: 1px solid var(--mmr-gold-medium);
+    color: var(--mmr-gold);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    backdrop-filter: var(--blur-light);
+    position: relative;
+    overflow: hidden;
+    min-height: 40px;
+    white-space: nowrap;
+}
+
+.btn-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transition: var(--transition-normal);
+}
+
+.btn-glass:hover {
+    background: var(--mmr-gold-medium);
+    border-color: var(--mmr-gold-strong);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+    color: var(--bg-primary);
+}
+
+.btn-glass:hover::before {
+    left: 100%;
+}
+
+.btn-glass:active {
+    transform: translateY(0);
+    transition: var(--transition-fast);
+}
+
+.btn-glass:disabled {
+    background: rgba(108, 117, 125, 0.1);
+    border-color: rgba(108, 117, 125, 0.3);
+    color: rgba(108, 117, 125, 0.6);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-glass:disabled::before {
+    display: none;
+}
+
+/* ===== TAMAÑOS DE BOTONES ===== */
+.btn-glass.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 32px;
+}
+
+.btn-glass.btn-lg {
+    padding: 14px 24px;
+    font-size: 16px;
+    min-height: 48px;
+}
+
+.btn-glass.btn-xl {
+    padding: 18px 32px;
+    font-size: 18px;
+    min-height: 56px;
+}
+
+/* ===== VARIANTES DE COLOR ===== */
+.btn-glass.btn-primary {
+    background: rgba(23, 162, 184, 0.1);
+    border-color: rgba(23, 162, 184, 0.3);
+    color: #17a2b8;
+}
+
+.btn-glass.btn-primary:hover {
+    background: rgba(23, 162, 184, 0.2);
+    border-color: rgba(23, 162, 184, 0.5);
+    color: #ffffff;
+}
+
+.btn-glass.btn-success {
+    background: rgba(40, 167, 69, 0.1);
+    border-color: rgba(40, 167, 69, 0.3);
+    color: #28a745;
+}
+
+.btn-glass.btn-success:hover {
+    background: rgba(40, 167, 69, 0.2);
+    border-color: rgba(40, 167, 69, 0.5);
+    color: #ffffff;
+}
+
+.btn-glass.btn-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.3);
+    color: #ffc107;
+}
+
+.btn-glass.btn-warning:hover {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: var(--bg-primary);
+}
+
+.btn-glass.btn-danger {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+}
+
+.btn-glass.btn-danger:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    color: #ffffff;
+}
+
+.btn-glass.btn-secondary {
+    background: rgba(108, 117, 125, 0.1);
+    border-color: rgba(108, 117, 125, 0.3);
+    color: #6c757d;
+}
+
+.btn-glass.btn-secondary:hover {
+    background: rgba(108, 117, 125, 0.2);
+    border-color: rgba(108, 117, 125, 0.5);
+    color: #ffffff;
+}
+
+.btn-glass.btn-whatsapp {
+    background: rgba(37, 211, 102, 0.1);
+    border-color: rgba(37, 211, 102, 0.3);
+    color: #25d366;
+}
+
+.btn-glass.btn-whatsapp:hover {
+    background: rgba(37, 211, 102, 0.2);
+    border-color: rgba(37, 211, 102, 0.5);
+    color: #ffffff;
+}
+
+/* ===== BOTONES CON ICONOS ===== */
+.btn-glass i {
+    font-size: 1em;
+    flex-shrink: 0;
+}
+
+.btn-glass.btn-icon-only {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.btn-glass.btn-icon-only.btn-sm {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-glass.btn-icon-only.btn-lg {
+    width: 48px;
+    height: 48px;
+}
+
+/* ===== GRUPOS DE BOTONES ===== */
+.btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-group.btn-group-vertical {
+    flex-direction: column;
+}
+
+.btn-group.btn-group-center {
+    justify-content: center;
+}
+
+.btn-group.btn-group-end {
+    justify-content: flex-end;
+}
+
+/* ===== BOTONES DE CARGA ===== */
+.btn-glass.loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.btn-glass.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.btn-glass.loading .btn-text {
+    opacity: 0;
+}
+
+/* ===== BOTONES FLOTANTES ===== */
+.btn-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.btn-float:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .btn-glass {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    .btn-glass.btn-sm {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-group .btn-glass {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-float {
+        bottom: 15px;
+        right: 15px;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-glass {
+        padding: 10px 14px;
+        font-size: 13px;
+        min-height: 36px;
+    }
+    
+    .btn-glass.btn-lg {
+        padding: 12px 18px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+}

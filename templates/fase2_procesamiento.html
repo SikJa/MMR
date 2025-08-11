@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 2 - Procesamiento Individual | MMR Group</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS específico de Fase 2 - Propuesta C -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fase2-procesamiento.css') }}">
+    <!-- CSS Override para eliminar interferencias -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fase2-override.css') }}">
+</head>
+<body>
+    <!-- Efectos de fondo blur glass -->
+    <div class="blur-bg"></div>
+    
+    <!-- Partículas doradas flotantes -->
+    <div class="particles" id="particlesContainer">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 15%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 25%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 7s;"></div>
+        <div class="particle" style="left: 45%; animation-delay: 9s;"></div>
+        <div class="particle" style="left: 55%; animation-delay: 11s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 13s;"></div>
+        <div class="particle" style="left: 75%; animation-delay: 15s;"></div>
+    </div>
+    
+    <!-- Barra de progreso más larga y gruesa -->
+    <div class="progress-bar-container" id="progressContainer">
+        <div class="progress-fill-top" id="progressFill"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button class="back-btn" id="btnBack">
+                <i class="fas fa-arrow-left"></i>
+                Dashboard
+            </button>
+            <div class="header-center">
+                <div class="product-name" id="productName">{{ current_product.product_name if current_product else 'Kit Transmisión Honda' }}</div>
+                <button class="copy-product-btn" id="btnCopyProduct">
+                    <i class="fas fa-copy"></i>
+                    Copiar
+                </button>
+            </div>
+            <div class="provider-badge">
+                <i class="fas fa-building"></i>
+                <span id="providerName">{{ session_data.provider if session_data else 'Herman Repuestos' }}</span>
+            </div>
+        </div>
+        
+        <!-- Top Section -->
+        <div class="top-section">
+            <!-- Stats Panel con efecto glass como "Total Estimado" -->
+            <div class="stats-panel golden-glow">
+                <div class="stats-title">
+                    <i class="fas fa-chart-bar"></i>
+                    ESTADÍSTICAS
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">
+                        <i class="fas fa-check-circle"></i>
+                        Procesados:
+                    </span>
+                    <span class="stat-value animated-counter" data-target="0" id="processedCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">
+                        <i class="fas fa-clock"></i>
+                        Pendientes:
+                    </span>
+                    <span class="stat-value animated-counter" data-target="0" id="pendingCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">
+                        <i class="fas fa-dollar-sign"></i>
+                        Total:
+                    </span>
+                    <span class="stat-value" id="totalValue">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Velocidad:
+                    </span>
+                    <span class="stat-value" id="speedValue">0/min</span>
+                </div>
+                
+                <!-- Medidor de calidad -->
+                <div class="quality-meter">
+                    <div class="quality-label">
+                        <i class="fas fa-star"></i>
+                        Calidad de imagen
+                    </div>
+                    <div class="quality-bar">
+                        <div class="quality-fill" id="qualityFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="quality-text" id="qualityText">Sin imagen</div>
+                </div>
+            </div>
+            
+            <!-- Drag Zone -->
+            <div class="drag-zone golden-glow" id="dragZone">
+                <div class="drag-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3>ZONA DE SUBIDA</h3>
+                <p>Arrastra la imagen aquí<br>o haz clic para seleccionar</p>
+                <button class="upload-btn ripple" id="btnSelectFile">
+                    <i class="fas fa-folder-open"></i>
+                    Seleccionar Archivo
+                </button>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+        </div>
+        
+        <!-- Processing Section -->
+        <div class="processing-section golden-glow">
+            <div class="section-title">PROCESAMIENTO ACTUAL</div>
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-image"></i>
+                        ORIGINAL
+                    </div>
+                    <div class="image-preview" id="originalImage">
+                        <div class="image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <p>Sin imagen</p>
+                        </div>
+                    </div>
+                    <div class="price" id="productPrice">$8,900</div>
+                    <button class="card-btn ripple" id="btnChangeImage">
+                        <i class="fas fa-sync-alt"></i>
+                        Cambiar
+                    </button>
+                    <button class="card-btn primary ripple" id="btnProcess" disabled>
+                        <i class="fas fa-play"></i>
+                        Procesar
+                    </button>
+                </div>
+                
+                <div class="processing-icon">
+                    <div class="unique-spinner" id="processingSpinner" style="display: none;"></div>
+                    <i class="fas fa-arrow-right" id="arrowIcon" style="font-size: 48px; color: #FFD700;"></i>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-magic"></i>
+                        PROCESADO
+                    </div>
+                    <div class="image-preview" id="processedImage">
+                        <div class="image-placeholder">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                            <p>Resultado aparecerá aquí</p>
+                        </div>
+                    </div>
+                    <div class="status" id="processStatus">
+                        <i class="fas fa-clock"></i>
+                        Esperando
+                    </div>
+                    <button class="card-btn ripple" id="btnDownload" disabled>
+                        <i class="fas fa-download"></i>
+                        Descargar
+                    </button>
+                    <button class="card-btn ripple" id="btnShare" disabled>
+                        <i class="fas fa-share-alt"></i>
+                        Compartir
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Templates Section -->
+        <div class="templates-section">
+            <div class="section-title">
+                <i class="fas fa-palette"></i>
+                TEMPLATES DISPONIBLES
+            </div>
+            <div class="templates-grid" id="templatesGrid">
+                <!-- Los templates se cargarán dinámicamente -->
+            </div>
+            <div class="template-description" id="templateDescription">
+                Selecciona un template para comenzar
+            </div>
+        </div>
+        
+        <!-- Processed Images Section -->
+        <div class="processed-section">
+            <div class="section-title">
+                <i class="fas fa-images"></i>
+                IMÁGENES PROCESADAS
+            </div>
+            <div class="processed-grid" id="processedGrid">
+                <div class="no-processed">
+                    <i class="fas fa-inbox"></i>
+                    <p>No hay imágenes procesadas</p>
+                    <span>Las imágenes aparecerán aquí después del procesamiento</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions al final -->
+        <div class="quick-actions">
+            <div class="actions-title">
+                <i class="fas fa-bolt"></i>
+                ACCIONES RÁPIDAS
+            </div>
+            <div class="actions-grid">
+                <button class="action-btn ripple" id="btnNext" disabled>
+                    <i class="fas fa-forward"></i>
+                    Siguiente
+                </button>
+                <button class="action-btn whatsapp ripple" id="btnWhatsApp" disabled>
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp
+                </button>
+                <button class="action-btn ripple" id="btnCopyAll">
+                    <i class="fas fa-copy"></i>
+                    Copiar Todo
+                </button>
+                <button class="action-btn ripple" id="btnSaveSession">
+                    <i class="fas fa-save"></i>
+                    Guardar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sistema de notificaciones toast -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Modal de zoom de imagen -->
+    <div class="image-zoom-modal" id="imageZoomModal">
+        <div class="zoom-content">
+            <img class="zoom-image" id="zoomImage" src="" alt="Imagen ampliada">
+            <button class="zoom-close" id="zoomClose">×</button>
+        </div>
+    </div>
+    
+    <!-- JavaScript STANDALONE para Fase 2 - SIN CONFLICTOS -->
+    <script src="{{ url_for('static', filename='js/notification-system-fase2.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/auto-save-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fase2-standalone.js') }}"></script>
+</body>
+</html>

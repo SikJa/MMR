@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta B - Minimalista Elegante</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Efectos de fondo blur más suaves */
+        .blur-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(255, 215, 0, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(255, 193, 7, 0.08) 0%, transparent 60%);
+            filter: blur(120px);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header Centrado */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .product-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .copy-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* Drag Zone Centrada */
+        .drag-zone {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px dashed rgba(255, 215, 0, 0.4);
+            border-radius: 20px;
+            padding: 80px 40px;
+            text-align: center;
+            margin: 0 auto 50px;
+            max-width: 600px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .drag-zone::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.03) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .drag-zone:hover {
+            border-color: rgba(255, 215, 0, 0.6);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+        }
+        
+        .drag-icon {
+            font-size: 64px;
+            color: #FFD700;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .drag-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .drag-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+        }
+        
+        /* Cards Container con Flecha */
+        .processing-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .card:hover {
+            border-color: rgba(255, 215, 0, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.1);
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+        
+        .card-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .card-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .card-btn.primary {
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            color: #1a1a1a;
+            border: none;
+        }
+        
+        /* Flecha entre cards */
+        .arrow {
+            font-size: 32px;
+            color: #FFD700;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+        
+        /* Template Selector */
+        .template-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .template-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #FFD700;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .template-item {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 15px;
+        }
+        
+        .template-item.active {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .template-item:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+            transform: translateY(-5px);
+        }
+        
+        .template-name {
+            margin-top: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            color: #1a1a1a;
+        }
+        
+        .action-btn.secondary {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="blur-bg"></div>
+    
+    <div class="container">
+        <!-- Header Centrado -->
+        <div class="header">
+            <h1 class="product-title">🏆 Aceite Gulf 20W-50 - $2,450</h1>
+            <button class="copy-btn">📋 Copiar Nombre</button>
+        </div>
+        
+        <!-- Drag Zone -->
+        <div class="drag-zone">
+            <span class="drag-icon">📤</span>
+            <h3 class="drag-title">Zona de Subida de Imagen</h3>
+            <p class="drag-subtitle">Arrastra aquí o haz clic</p>
+        </div>
+        
+        <!-- Processing Container -->
+        <div class="processing-container">
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-title">📷 Original</div>
+                    <div class="image-preview">
+                        [Vista Previa]
+                    </div>
+                    <button class="card-btn">🔄 Cambiar</button>
+                </div>
+                
+                <div class="arrow">➡️</div>
+                
+                <div class="card">
+                    <div class="card-title">✨ Procesado</div>
+                    <div class="image-preview">
+                        [Resultado]
+                    </div>
+                    <button class="card-btn primary">⬇️ Descargar</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Template Selector -->
+        <div class="template-section">
+            <div class="template-title">🎨 Seleccionar Template</div>
+            <div class="templates-grid">
+                <div class="template-item">
+                    <div>T1</div>
+                    <div class="template-name">Clásico</div>
+                </div>
+                <div class="template-item">
+                    <div>T2</div>
+                    <div class="template-name">Moderno</div>
+                </div>
+                <div class="template-item">
+                    <div>T3</div>
+                    <div class="template-name">Elegante</div>
+                </div>
+                <div class="template-item">
+                    <div>T4</div>
+                    <div class="template-name">Deportivo</div>
+                </div>
+                <div class="template-item active">
+                    <div>T5</div>
+                    <div class="template-name">Premium</div>
+                </div>
+                <div class="template-item">
+                    <div>T6</div>
+                    <div class="template-name">Minimal</div>
+                </div>
+                <div class="template-item">
+                    <div>T7</div>
+                    <div class="template-name">Colorido</div>
+                </div>
+                <div class="template-item">
+                    <div>T8</div>
+                    <div class="template-name">Pro</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn primary">🚀 Procesar</button>
+            <button class="action-btn secondary">⏭️ Siguiente Producto</button>
+        </div>
+    </div>
+</body>
+</html>

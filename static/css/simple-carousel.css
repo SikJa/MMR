@@ -1,0 +1,196 @@
+/* Estilos para el carrusel horizontal simple */
+.gallery-container {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Contenedor principal del carrusel */
+.horizontal-carousel {
+    position: relative;
+    width: 100%;
+    padding: 0 40px;
+    margin-bottom: 20px;
+}
+
+/* Contenedor de las tarjetas con scroll horizontal */
+.carousel-items {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px 0;
+    gap: 15px;
+    scrollbar-width: thin;
+    scrollbar-color: #ffcc00 rgba(255, 255, 255, 0.1);
+}
+
+.carousel-items::-webkit-scrollbar {
+    height: 6px;
+}
+
+.carousel-items::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.carousel-items::-webkit-scrollbar-thumb {
+    background: #ffcc00;
+    border-radius: 3px;
+}
+
+/* Tarjetas individuales */
+.card-item {
+    flex: 0 0 auto;
+    width: 250px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-image {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+}
+
+.card-content {
+    padding: 15px;
+}
+
+.card-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: white;
+}
+
+.card-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffcc00;
+    margin-bottom: 5px;
+}
+
+.card-provider {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-card-download {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-card-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+/* Botones de navegación */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.carousel-nav:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-prev {
+    left: 0;
+}
+
+.carousel-next {
+    right: 0;
+}
+
+/* Botones de acción principales */
+.gallery-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.gallery-actions .btn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.gallery-actions .btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    color: white;
+    border: none;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: white;
+    border: none;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #2c3e50, #4ca1af);
+    color: white;
+    border: none;
+}

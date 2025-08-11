@@ -1,0 +1,345 @@
+/* ===== MMR GROUP - ESTILOS PRINCIPALES ===== */
+
+:root {
+    /* Colores principales */
+    --mmr-gold: #FFD700;
+    --mmr-gold-light: rgba(255, 215, 0, 0.1);
+    --mmr-gold-medium: rgba(255, 215, 0, 0.3);
+    --mmr-gold-strong: rgba(255, 215, 0, 0.5);
+    
+    /* Colores de fondo */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-glass: rgba(255, 255, 255, 0.05);
+    --bg-glass-hover: rgba(255, 255, 255, 0.1);
+    
+    /* Colores de texto */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    
+    /* Bordes */
+    --border-glass: 1px solid rgba(255, 255, 255, 0.1);
+    --border-gold: 1px solid var(--mmr-gold-medium);
+    --border-gold-strong: 2px solid var(--mmr-gold-strong);
+    
+    /* Sombras */
+    --shadow-glass: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --shadow-gold: 0 4px 15px rgba(255, 215, 0, 0.2);
+    --shadow-gold-strong: 0 8px 25px rgba(255, 215, 0, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: all 0.2s ease;
+    --transition-normal: all 0.3s ease;
+    --transition-slow: all 0.5s ease;
+    
+    /* Blur */
+    --blur-light: blur(10px);
+    --blur-strong: blur(20px);
+}
+
+/* ===== RESET Y BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ===== CONTENEDORES PRINCIPALES ===== */
+.main-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.glass-container {
+    background: var(--bg-glass);
+    border: var(--border-glass);
+    border-radius: 15px;
+    backdrop-filter: var(--blur-light);
+    padding: 20px;
+    transition: var(--transition-normal);
+}
+
+.glass-container:hover {
+    background: var(--bg-glass-hover);
+    border-color: var(--mmr-gold-medium);
+    box-shadow: var(--shadow-gold);
+}
+
+/* ===== TIPOGRAFÍA ===== */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--mmr-gold);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 1rem; }
+
+p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* ===== ICONOS ===== */
+.icon {
+    color: var(--mmr-gold);
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.icon-large {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+/* ===== UTILIDADES ===== */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-10 { margin-bottom: 10px; }
+.mb-15 { margin-bottom: 15px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-25 { margin-bottom: 25px; }
+
+.mt-10 { margin-top: 10px; }
+.mt-15 { margin-top: 15px; }
+.mt-20 { margin-top: 20px; }
+.mt-25 { margin-top: 25px; }
+
+.flex { display: flex; }
+.flex-column { flex-direction: column; }
+.flex-center { align-items: center; justify-content: center; }
+.flex-between { justify-content: space-between; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-10 { gap: 10px; }
+.gap-15 { gap: 15px; }
+.gap-20 { gap: 20px; }
+
+.w-100 { width: 100%; }
+.h-100 { height: 100%; }
+
+/* ===== SCROLLBARS PERSONALIZADAS ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--mmr-gold-strong);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mmr-gold);
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.fade-in { animation: fadeIn 0.5s ease; }
+.slide-in { animation: slideIn 0.3s ease; }
+.pulse { animation: pulse 2s infinite; }
+.spin { animation: spin 1s linear infinite; }
+
+/* ===== ESTADOS ===== */
+.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* ===== RESPONSIVE BASE ===== */
+@media (max-width: 768px) {
+    .main-container {
+        padding: 10px;
+    }
+    
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.25rem; }
+    
+    .glass-container {
+        padding: 15px;
+    }
+}
+/* ==
+=== BOTÓN FASE 2 - ACCESO RÁPIDO ===== */
+.fase2-quick-access {
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.btn-fase2-access {
+    width: 100%;
+    background: linear-gradient(135deg, 
+        rgba(255, 215, 0, 0.1) 0%, 
+        rgba(255, 215, 0, 0.05) 50%, 
+        rgba(255, 215, 0, 0.1) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 16px;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-fase2-access::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 215, 0, 0.1), 
+        transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-fase2-access:hover::before {
+    left: 100%;
+}
+
+.btn-fase2-access:hover {
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-fase2-content {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-fase2-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #FFD700, #FFA000);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-fase2-text {
+    flex: 1;
+    text-align: left;
+}
+
+.btn-fase2-text h3 {
+    color: #FFD700;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.btn-fase2-text p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.btn-fase2-arrow {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFD700;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-fase2-access:hover .btn-fase2-arrow {
+    background: rgba(255, 215, 0, 0.2);
+    transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .btn-fase2-content {
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+    }
+    
+    .btn-fase2-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .btn-fase2-text h3 {
+        font-size: 1.2rem;
+    }
+    
+    .btn-fase2-text p {
+        font-size: 0.9rem;
+    }
+}

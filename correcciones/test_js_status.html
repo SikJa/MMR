@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JS Status</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .status {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+        .error {
+            border-left-color: #ff4444;
+        }
+        .success {
+            border-left-color: #44ff44;
+        }
+        button {
+            background: #FFD700;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagnóstico del JavaScript</h1>
+    
+    <div id="status-container">
+        <div class="status">Cargando diagnóstico...</div>
+    </div>
+
+    <div>
+        <h3>Test Manual:</h3>
+        <textarea id="productListInput" placeholder="Pega lista aquí...">- Aceite Gulf 20W-50 - $2,450 - Aceite motor
+- Filtro Honda Civic - $850 - Filtro aire
+- Bujías NGK - $1,200 - Bujías</textarea>
+        <br>
+        <button id="btnProcessList" onclick="testProcessing()">Test Procesar Lista</button>
+        <button onclick="testAnalysis()">Test Análisis</button>
+        <button onclick="checkElements()">Verificar Elementos</button>
+    </div>
+
+    <div id="results" style="margin-top: 20px; background: #222; padding: 15px; border-radius: 8px;">
+        <h4>Resultados:</h4>
+        <div id="results-content">Esperando pruebas...</div>
+    </div>
+
+    <script src="static/js/offers-creator.js"></script>
+    <script>
+        function updateStatus(message, type = 'status') {
+            const container = document.getElementById('status-container');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            container.appendChild(div);
+        }
+
+        function checkElements() {
+            const results = document.getElementById('results-content');
+            let html = '<h5>Verificación de Elementos:</h5>';
+            
+            // Verificar elementos HTML
+            const elements = [
+                'productListInput',
+                'btnProcessList',
+                'listAnalysisInfo',
+                'detectedProducts',
+                'estimatedTotal',
+                'detectedProviders'
+            ];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                html += `<div>${id}: ${element ? '✅ Encontrado' : '❌ No encontrado'}</div>`;
+            });
+            
+            // Verificar variables globales
+            html += '<h5>Variables Globales:</h5>';
+            html += `<div>window.offersCreator: ${window.offersCreator ? '✅ Existe' : '❌ No existe'}</div>`;
+            html += `<div>OffersCreator class: ${typeof OffersCreator !== 'undefined' ? '✅ Definida' : '❌ No definida'}</div>`;
+            
+            if (window.offersCreator) {
+                html += `<div>offersCreator.analyzeProductList: ${typeof window.offersCreator.analyzeProductList === 'function' ? '✅ Función' : '❌ No es función'}</div>`;
+                html += `<div>offersCreator.startProcessing: ${typeof window.offersCreator.startProcessing === 'function' ? '✅ Función' : '❌ No es función'}</div>`;
+                html += `<div>offersCreator.currentAnalysis: ${window.offersCreator.currentAnalysis ? '✅ Existe' : '❌ No existe'}</div>`;
+            }
+            
+            results.innerHTML = html;
+        }
+
+        function testAnalysis() {
+            const input = document.getElementById('productListInput');
+            const results = document.getElementById('results-content');
+            
+            if (!window.offersCreator) {
+                results.innerHTML = '❌ offersCreator no está disponible';
+                return;
+            }
+            
+            try {
+                window.offersCreator.analyzeProductList(input.value);
+                results.innerHTML = `✅ Análisis ejecutado:<br>
+                    Productos: ${window.offersCreator.currentAnalysis.products.length}<br>
+                    Total: $${window.offersCreator.currentAnalysis.totalEstimated}<br>
+                    Válido: ${window.offersCreator.currentAnalysis.isValid}`;
+            } catch (error) {
+                results.innerHTML = `❌ Error en análisis: ${error.message}`;
+            }
+        }
+
+        function testProcessing() {
+            const results = document.getElementById('results-content');
+            
+            if (!window.offersCreator) {
+                results.innerHTML = '❌ offersCreator no está disponible';
+                return;
+            }
+            
+            try {
+                // Primero analizar
+                const input = document.getElementById('productListInput');
+                window.offersCreator.analyzeProductList(input.value);
+                
+                // Luego procesar
+                window.offersCreator.startProcessing();
+                results.innerHTML = '✅ Procesamiento iniciado correctamente';
+            } catch (error) {
+                results.innerHTML = `❌ Error en procesamiento: ${error.message}`;
+            }
+        }
+
+        // Diagnóstico automático al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStatus('DOM cargado', 'success');
+            
+            setTimeout(() => {
+                if (typeof OffersCreator === 'undefined') {
+                    updateStatus('❌ Clase OffersCreator no definida', 'error');
+                } else {
+                    updateStatus('✅ Clase OffersCreator definida', 'success');
+                }
+                
+                if (!window.offersCreator) {
+                    updateStatus('❌ Instancia offersCreator no creada', 'error');
+                } else {
+                    updateStatus('✅ Instancia offersCreator creada', 'success');
+                }
+                
+                // Auto-verificar elementos
+                checkElements();
+            }, 1000);
+        });
+
+        // Capturar errores
+        window.addEventListener('error', (e) => {
+            updateStatus(`❌ Error JS: ${e.message} en línea ${e.lineno}`, 'error');
+        });
+
+        console.log('🧪 Test JS Status cargado');
+    </script>
+</body>
+</html>
