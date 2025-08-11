@@ -5,7 +5,13 @@ import uuid
 import numpy as np
 import logging
 from flask import Flask, request, send_file, jsonify, render_template, session, redirect, url_for
-from rembg import remove
+# Rembg es opcional para remover fondos
+try:
+    from rembg import remove
+    REMBG_AVAILABLE = True
+except ImportError:
+    REMBG_AVAILABLE = False
+    print("⚠️ rembg no disponible, usando imagen original")
 from PIL import Image, ImageDraw, ImageFont
 import traceback
 import csv
@@ -160,20 +166,30 @@ def process():
 
         # Abrir imagen correctamente desde FileStorage
         input_image = Image.open(image_file.stream).convert('RGBA')
-        # rembg puede devolver bytes, PIL.Image o ndarray. Convertimos a PIL.Image siempre.
-        output_nobg_data = remove(input_image)
-        output_nobg = None
-        if isinstance(output_nobg_data, bytes):
-            output_nobg = Image.open(io.BytesIO(output_nobg_data)).convert('RGBA')
-        elif isinstance(output_nobg_data, Image.Image):
-            output_nobg = output_nobg_data.convert('RGBA')
+        
+        # Remover fondo usando rembg (opcional)
+        if REMBG_AVAILABLE:
+            try:
+                output_nobg_data = remove(input_image)
+                output_nobg = None
+                if isinstance(output_nobg_data, bytes):
+                    output_nobg = Image.open(io.BytesIO(output_nobg_data)).convert('RGBA')
+                elif isinstance(output_nobg_data, Image.Image):
+                    output_nobg = output_nobg_data.convert('RGBA')
+                else:
+                    # Si es ndarray (por ejemplo, numpy array), convertir a PIL.Image
+                    import numpy as np
+                    if hasattr(output_nobg_data, 'shape'):
+                        output_nobg = Image.fromarray(np.uint8(output_nobg_data)).convert('RGBA')
+                    else:
+                        raise Exception('No se pudo convertir la imagen procesada por rembg a PIL.Image')
+                print("✅ Fondo removido con rembg")
+            except Exception as e:
+                print(f"⚠️ Error con rembg, usando imagen original: {e}")
+                output_nobg = input_image
         else:
-            # Si es ndarray (por ejemplo, numpy array), convertir a PIL.Image
-            import numpy as np
-            if hasattr(output_nobg_data, 'shape'):
-                output_nobg = Image.fromarray(np.uint8(output_nobg_data)).convert('RGBA')
-            else:
-                raise Exception('No se pudo convertir la imagen procesada por rembg a PIL.Image')
+            print("⚠️ rembg no disponible, usando imagen original")
+            output_nobg = input_image
 
         # Mejorar resolución de la imagen sin fondo usando IA (super-image) - OPCIONAL
         if SUPER_IMAGE_AVAILABLE:
