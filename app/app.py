@@ -11,7 +11,13 @@ import traceback
 import csv
 from collections import Counter, defaultdict
 from PIL import ImageFilter
-from super_image import EdsrModel, ImageLoader
+# Super-image es opcional para mejora de resolución
+try:
+    from super_image import EdsrModel, ImageLoader
+    SUPER_IMAGE_AVAILABLE = True
+except ImportError:
+    SUPER_IMAGE_AVAILABLE = False
+    print("⚠️ super-image no disponible, usando resolución original")
 from database import db
 
 # Crear aplicación Flask
@@ -28,9 +34,9 @@ if os.environ.get('FLASK_ENV') == 'production':
     app.logger.setLevel(logging.INFO)
     app.logger.info('MMR SaaS startup')
 
-# Configuración de rutas - usar ruta absoluta conocida
-BASE_DIR = r'C:\Users\CHAMP\Desktop\mmr_saas'
-TEMPLATES_DIR = r'C:\Users\CHAMP\Desktop\mmr_saas\processing\product_templates'
+# Configuración de rutas - compatible con desarrollo y producción
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'processing', 'product_templates')
 
 # Ruta de la plantilla base (imagen de fondo) - usar plantilla_1.png como default
 TEMPLATE_PATH = os.path.join(TEMPLATES_DIR, 'plantilla_1.png')
@@ -169,16 +175,22 @@ def process():
             else:
                 raise Exception('No se pudo convertir la imagen procesada por rembg a PIL.Image')
 
-        # Mejorar resolución de la imagen sin fondo usando IA (super-image)
-        model = EdsrModel.from_pretrained('eugenesiow/edsr-base', scale=2)
-        inputs = ImageLoader.load_image(output_nobg.convert('RGB'))  # Quitar alfa para el modelo
-        preds = model(inputs)
-        output_nobg_sr = ImageLoader.save_image(preds, 'temp_sr.png')  # Guarda la imagen mejorada
-        # Recuperar el canal alfa original y combinarlo con la imagen mejorada
-        sr_img = Image.open('temp_sr.png').convert('RGBA')
-        alpha = output_nobg.split()[-1].resize(sr_img.size, Image.Resampling.LANCZOS)
-        sr_img.putalpha(alpha)
-        output_nobg = sr_img
+        # Mejorar resolución de la imagen sin fondo usando IA (super-image) - OPCIONAL
+        if SUPER_IMAGE_AVAILABLE:
+            try:
+                model = EdsrModel.from_pretrained('eugenesiow/edsr-base', scale=2)
+                inputs = ImageLoader.load_image(output_nobg.convert('RGB'))
+                preds = model(inputs)
+                output_nobg_sr = ImageLoader.save_image(preds, 'temp_sr.png')
+                sr_img = Image.open('temp_sr.png').convert('RGBA')
+                alpha = output_nobg.split()[-1].resize(sr_img.size, Image.Resampling.LANCZOS)
+                sr_img.putalpha(alpha)
+                output_nobg = sr_img
+                print("✅ Resolución mejorada con super-image")
+            except Exception as e:
+                print(f"⚠️ Error con super-image, usando resolución original: {e}")
+        else:
+            print("⚠️ Super-image no disponible, usando resolución original")
 
         # Obtener el template seleccionado o usar el por defecto
         selected_template = request.form.get('template', 'plantilla_1.png')
