@@ -24,7 +24,17 @@ try:
 except ImportError:
     SUPER_IMAGE_AVAILABLE = False
     print("⚠️ super-image no disponible, usando resolución original")
-from database import db
+# Database es opcional para funcionalidades avanzadas
+try:
+    from .database import db
+    DATABASE_AVAILABLE = True
+except ImportError:
+    try:
+        from database import db
+        DATABASE_AVAILABLE = True
+    except ImportError:
+        DATABASE_AVAILABLE = False
+        print("⚠️ Database no disponible, funcionalidades básicas activas")
 
 # Crear aplicación Flask
 app = Flask(__name__, static_folder='../static', template_folder='../templates')
