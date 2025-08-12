@@ -2,14 +2,14 @@
 console.log('🔧 Cargando solución rápida...');
 
 // Función global simple sin conflictos
-window.startProcessingFix = function() {
+window.startProcessingFix = function () {
     console.log('🚀 startProcessingFix llamada');
-    
+
     // Verificar que existe la instancia
     if (!window.offersCreator) {
         console.log('⚠️ Creando nueva instancia...');
         window.offersCreator = new OffersCreator();
-        
+
         // Esperar un poco y reintentar
         setTimeout(() => {
             if (window.offersCreator && window.offersCreator.startProcessing) {
@@ -18,7 +18,7 @@ window.startProcessingFix = function() {
         }, 500);
         return;
     }
-    
+
     // Llamar directamente al método
     if (window.offersCreator.startProcessing) {
         window.offersCreator.startProcessing();
